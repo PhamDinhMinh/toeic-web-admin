@@ -1,4 +1,4 @@
-export const APP_NAME = 'Yootek IOT';
+export const APP_NAME = 'Toeic Admin';
 
 export const ACCESS_TOKEN_KEY = 'accessToken';
 export const REFRESH_TOKEN_KEY = 'refreshToken';

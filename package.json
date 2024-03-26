@@ -1,5 +1,5 @@
 {
-  "name": "iot-admin-web",
+  "name": "toeic-web-admin",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -62,6 +62,6 @@
     "vite": "^5.0.0"
   },
   "main": "index.js",
-  "author": "buiducnhat <nhaths4701@gmail.com>",
+  "author": "pham dinh minh",
   "license": "MIT"
 }
