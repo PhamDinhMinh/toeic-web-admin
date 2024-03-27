@@ -1,5 +1,5 @@
 import { UserOutlined } from '@ant-design/icons';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { App, Button, Form, Input, Layout, Typography } from 'antd';
 import { AxiosError } from 'axios';
@@ -9,6 +9,7 @@ import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
 import { TLoginInput } from '@/modules/auth/auth.model';
 import authService from '@/modules/auth/auth.service';
+import { useAuthStore } from '@/modules/auth/auth.zustand';
 import { THttpResponse } from '@/shared/http-service';
 import { transApiResDataCode } from '@/shared/utils';
 import { color } from '@/style/global-styles';
@@ -20,8 +21,8 @@ export const Route = createFileRoute('/_auth/auth/login')({
 function LoginPage() {
   const { t } = useTranslation();
 
-  const queryClient = useQueryClient();
   const setLoading = useAppStore((state) => state.setLoading);
+  const setUser = useAuthStore((state: any) => state.setUser);
 
   const { notification } = App.useApp();
 
@@ -29,11 +30,11 @@ function LoginPage() {
 
   const loginMutation = useMutation({
     mutationFn: (input: TLoginInput) => authService.login(input),
-    onSuccess: () => {
+    onSuccess: (data) => {
       notification.success({
         message: t('Đăng nhập thành công'),
       });
-      queryClient.refetchQueries({ queryKey: ['auth/getMe'] });
+      setUser(data);
       setLoading(false);
     },
     onError: (error: AxiosError<THttpResponse<null>>) => {
@@ -50,6 +51,7 @@ function LoginPage() {
 
   const onFinish = async (data: TLoginInput) => {
     loginMutation.mutate(data);
+    setLoading(true);
   };
 
   const onFinishFailed = () => {

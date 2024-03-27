@@ -16,6 +16,8 @@ export const initial = {
   'Số điện thoại': '',
   'Email không hợp lệ': '',
   'Số điện thoại không hợp lệ': '',
+  'Đăng ký thành công': '',
+  'Đăng ký thất bại': '',
 };
 
 export type TObj = typeof initial;

@@ -1,7 +1,6 @@
-import { UserOutlined } from '@ant-design/icons';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { Link, createFileRoute } from '@tanstack/react-router';
-import { App, Button, Flex, Form, Input, Layout, Typography } from 'antd';
+import { App, Button, Form, Input, Layout, Typography } from 'antd';
 import { AxiosError } from 'axios';
 
 import useTranslation from '@/hooks/useTranslation';
@@ -19,37 +18,34 @@ export const Route = createFileRoute('/_auth/auth/register')({
 function RegisterPage() {
   const { t } = useTranslation();
 
-  const queryClient = useQueryClient();
   const setLoading = useAppStore((state) => state.setLoading);
 
   const { notification } = App.useApp();
 
   const [form] = Form.useForm<TRegisterInput>();
 
-  //   const loginMutation = useMutation({
-  //     mutationFn: (input: TLoginInput) => authService.login(input),
-  //     onSuccess: () => {
-  //       notification.success({
-  //         message: t('Đăng nhập thành công'),
-  //       });
-  //       queryClient.refetchQueries({ queryKey: ['auth/getMe'] });
-  //       setLoading(false);
-  //     },
-  //     onError: (error: AxiosError<THttpResponse<null>>) => {
-  //       notification.error({
-  //         message: t('Đăng nhập thất bại'),
-  //         description: transApiResDataCode(t, error.response?.data),
-  //       });
-  //       setLoading(false);
-  //     },
-  //     onMutate: () => {
-  //       setLoading(true);
-  //     },
-  //   });
+  const registerMutation = useMutation({
+    mutationFn: (input: TRegisterInput) => authService.register(input),
+    onSuccess: () => {
+      notification.success({
+        message: t('Đăng ký thành công'),
+      });
+      setLoading(false);
+    },
+    onError: (error: AxiosError<THttpResponse<null>>) => {
+      notification.error({
+        message: t('Đăng ký thất bại'),
+        description: transApiResDataCode(t, error.response?.data),
+      });
+      setLoading(false);
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+  });
 
   const onFinish = async (data: TRegisterInput) => {
-    // loginMutation.mutate(data);
-    console.log(data);
+    registerMutation.mutate(data);
   };
 
   const onFinishFailed = () => {

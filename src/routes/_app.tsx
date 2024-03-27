@@ -1,9 +1,11 @@
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Layout, theme } from 'antd';
+import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { useAuth } from '@/hooks/use-auth';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/configs/constants';
+import { useAuthStore } from '@/modules/auth/auth.zustand';
 import MainSideNav from '@/shared/components/layouts/app/side-nav';
 import MainTopBar from '@/shared/components/layouts/app/top-bar';
 import { TST } from '@/shared/types/tst.type';
@@ -15,19 +17,24 @@ export const Route = createFileRoute('/_app')({
 function AppLayout() {
   const navigate = useNavigate();
 
-  const authQuery = useAuth();
-
   const { token } = theme.useToken();
+  const tokenAuth = Cookies.get(ACCESS_TOKEN_KEY);
+
+  const userInformation = useAuthStore((state: any) => state.user);
+  const logout = useAuthStore((state: any) => state.logout);
 
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    if (authQuery.isError) {
+    if (!tokenAuth && !userInformation) {
+      logout();
+      Cookies.remove(ACCESS_TOKEN_KEY);
+      Cookies.remove(REFRESH_TOKEN_KEY);
       navigate({ to: '/auth/login' });
     }
-  }, [authQuery.isError, navigate]);
+  }, [logout, navigate, tokenAuth, userInformation]);
 
-  return authQuery.isSuccess ? (
+  return (
     <Layout hasSider style={{ minHeight: '100vh' }}>
       <MainSideNav collapsed={collapsed} setCollapsed={setCollapsed} />
 
@@ -39,8 +46,6 @@ function AppLayout() {
         </SContent>
       </Layout>
     </Layout>
-  ) : (
-    <></>
   );
 }
 

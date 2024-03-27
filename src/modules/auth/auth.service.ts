@@ -3,26 +3,26 @@ import Cookies from 'js-cookie';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/configs/constants';
 import httpService from '@/shared/http-service';
 
-import { TUser } from '../users/user.model';
 import { TLoginInput, TLoginResponse, TRegisterInput } from './auth.model';
+import { useAuthStore } from './auth.zustand';
 
 class AuthService {
   public async login(input: TLoginInput) {
     const result = await httpService.requestNoAuth<TLoginResponse>({
-      url: '/api/auth/token-auth',
+      url: '/api/services/app/Authentication/Login',
       method: 'POST',
       data: input,
     });
 
-    Cookies.set(ACCESS_TOKEN_KEY, result.data.accessToken);
-    Cookies.set(REFRESH_TOKEN_KEY, result.data.refreshToken);
+    Cookies.set(ACCESS_TOKEN_KEY, result.accessToken);
+    Cookies.set(REFRESH_TOKEN_KEY, result.refreshToken);
 
-    return this.getMe();
+    return result?.user;
   }
 
   async register(input: TRegisterInput) {
     const isSuccess = await httpService.requestNoAuth<boolean>({
-      url: '/api/auth/register',
+      url: '/api/services/app/Authentication/Register',
       method: 'POST',
       data: input,
     });
@@ -38,45 +38,10 @@ class AuthService {
   }
 
   async logout() {
+    const setUser = useAuthStore((state) => state.setUser);
     Cookies.remove(ACCESS_TOKEN_KEY);
     Cookies.remove(REFRESH_TOKEN_KEY);
-  }
-
-  async refreshToken() {
-    try {
-      const refreshToken = Cookies.get(REFRESH_TOKEN_KEY);
-
-      if (!refreshToken) {
-        return false;
-      }
-
-      const response = await httpService.requestNoAuth<TLoginResponse>({
-        url: '/api/auth/refresh-token',
-        method: 'POST',
-        data: {
-          refreshToken,
-        },
-      });
-
-      Cookies.set(ACCESS_TOKEN_KEY, response.data.accessToken);
-
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  async getMe() {
-    const accessToken = Cookies.get(ACCESS_TOKEN_KEY);
-
-    if (!accessToken) {
-      throw new Error('Access token is not found');
-    }
-
-    return await httpService.request<TUser>({
-      url: '/api/auth/me',
-      method: 'GET',
-    });
+    setUser(null);
   }
 }
 

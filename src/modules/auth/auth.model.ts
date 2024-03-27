@@ -3,11 +3,24 @@ export type TLoginInput = {
   password: string;
 };
 
+export type TUser = {
+  id: number;
+  userName: string;
+  name: string;
+  emailAddress: string;
+  phoneNumber?: string;
+  creationTime: string;
+  role?: string;
+  dateOfBirth?: any;
+  gender?: string;
+  imageUrl?: string;
+  coverAvatarUrl?: string;
+};
+
 export type TLoginResponse = {
   accessToken: string;
   refreshToken: string;
-  expireInSeconds: number;
-  refreshTokenExpireInSeconds: number;
+  user: TUser;
 };
 
 export type TRegisterInput = {
