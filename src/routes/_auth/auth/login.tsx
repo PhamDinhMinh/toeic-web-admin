@@ -1,15 +1,17 @@
-import { LockFilled, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
-import { App, Button, Flex, Form, Input, Layout, Typography } from 'antd';
+import { Link, createFileRoute } from '@tanstack/react-router';
+import { App, Button, Form, Input, Layout, Typography } from 'antd';
 import { AxiosError } from 'axios';
-import { useTranslation } from 'react-i18next';
+import { LockKeyhole } from 'lucide-react';
 
+import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
 import { TLoginInput } from '@/modules/auth/auth.model';
 import authService from '@/modules/auth/auth.service';
 import { THttpResponse } from '@/shared/http-service';
 import { transApiResDataCode } from '@/shared/utils';
+import { color } from '@/style/global-styles';
 
 export const Route = createFileRoute('/_auth/auth/login')({
   component: LoginPage,
@@ -29,14 +31,14 @@ function LoginPage() {
     mutationFn: (input: TLoginInput) => authService.login(input),
     onSuccess: () => {
       notification.success({
-        message: t('Login successfully'),
+        message: t('Đăng nhập thành công'),
       });
       queryClient.refetchQueries({ queryKey: ['auth/getMe'] });
       setLoading(false);
     },
     onError: (error: AxiosError<THttpResponse<null>>) => {
       notification.error({
-        message: t('Login failed'),
+        message: t('Đăng nhập thất bại'),
         description: transApiResDataCode(t, error.response?.data),
       });
       setLoading(false);
@@ -52,8 +54,8 @@ function LoginPage() {
 
   const onFinishFailed = () => {
     notification.error({
-      message: t('Login failed'),
-      description: t('Please contact the administrator'),
+      message: t('Đăng nhập thất bại'),
+      description: t('Làm ơn liên hệ với quản trị viên'),
     });
   };
 
@@ -62,38 +64,50 @@ function LoginPage() {
       <Layout.Content
         style={{
           height: '100vh',
+          backgroundImage: `url('https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_1280.jpg')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
-        <Flex
-          style={{ height: '100vh' }}
-          vertical
-          gap={24}
-          align="center"
-          justify="center"
+        <div
+          style={{
+            backgroundColor: 'rgba(255, 255, 200, 0.5)',
+            padding: '20px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            backdropFilter: 'blur(10px)',
+            minWidth: '35%',
+          }}
         >
-          <Typography.Title level={2}>
-            {t('Login to your account')}
+          <Typography.Title
+            level={2}
+            style={{ color: color.grey_800, textAlign: 'center' }}
+          >
+            {t('Đăng nhập')}
           </Typography.Title>
 
           <Form
             form={form}
             layout="vertical"
             size="large"
-            style={{ width: '30%' }}
+            style={{ width: '100%' }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
           >
             <Form.Item<TLoginInput>
-              name="userNameOrEmailAddress"
+              name="userNameOrEmail"
               rules={[
                 {
                   required: true,
-                  message: t('This field is required'),
+                  message: t('Trường này là bắt buộc'),
                 },
               ]}
             >
               <Input
-                placeholder={t('Enter your username or email')}
+                placeholder={t('Tên đăng nhập hoặc email')}
                 prefix={<UserOutlined />}
               />
             </Form.Item>
@@ -103,27 +117,37 @@ function LoginPage() {
               rules={[
                 {
                   required: true,
-                  message: t('This field is required'),
+                  message: t('Trường này là bắt buộc'),
                 },
               ]}
             >
               <Input.Password
-                placeholder={t('Enter your password')}
-                prefix={<LockFilled />}
+                placeholder={t('Nhập mật khẩu')}
+                prefix={<LockKeyhole size={18} />}
               />
             </Form.Item>
 
             <Form.Item>
               <Button
-                style={{ width: '100%' }}
+                style={{ width: '100%', backgroundColor: color.green_500 }}
                 type="primary"
                 htmlType="submit"
               >
-                {t('Submit')}
+                {t('Đăng nhập')}
               </Button>
             </Form.Item>
+            <Typography
+              style={{
+                textAlign: 'end',
+              }}
+            >
+              {t('Bạn chưa có tài khoản')}{' '}
+              <Link to="/auth/register" className="[&.active]:font-bold">
+                {t('Đăng ký ngay')}
+              </Link>
+            </Typography>
           </Form>
-        </Flex>
+        </div>
       </Layout.Content>
     </>
   );

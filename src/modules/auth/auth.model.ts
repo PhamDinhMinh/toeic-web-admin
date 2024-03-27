@@ -1,5 +1,5 @@
 export type TLoginInput = {
-  userNameOrEmailAddress: string;
+  userNameOrEmail: string;
   password: string;
 };
 
@@ -11,15 +11,11 @@ export type TLoginResponse = {
 };
 
 export type TRegisterInput = {
-  username: string;
-  firstName: string;
-  lastName?: string;
-  email: string;
+  fullName: string;
+  emailAddress: string;
   password: string;
+  userName: string;
   phoneNumber?: string;
-  address?: string;
-  gender?: string;
-  dateOfBirth?: string | Date;
 };
 
 export type TRefreshTokenInput = {

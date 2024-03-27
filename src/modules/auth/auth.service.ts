@@ -1,11 +1,6 @@
 import Cookies from 'js-cookie';
 
-import {
-  ACCESS_TOKEN_KEY,
-  ACCESS_TOKEN_KEY_EXPIRES_AT,
-  REFRESH_TOKEN_KEY,
-  REFRESH_TOKEN_KEY_EXPIRES_AT,
-} from '@/configs/constants';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/configs/constants';
 import httpService from '@/shared/http-service';
 
 import { TUser } from '../users/user.model';
@@ -21,16 +16,6 @@ class AuthService {
 
     Cookies.set(ACCESS_TOKEN_KEY, result.data.accessToken);
     Cookies.set(REFRESH_TOKEN_KEY, result.data.refreshToken);
-    Cookies.set(
-      ACCESS_TOKEN_KEY_EXPIRES_AT,
-      new Date(Date.now() + result.data.expireInSeconds * 1000).toISOString(),
-    );
-    Cookies.set(
-      REFRESH_TOKEN_KEY_EXPIRES_AT,
-      new Date(
-        Date.now() + result.data.refreshTokenExpireInSeconds * 1000,
-      ).toISOString(),
-    );
 
     return this.getMe();
   }
@@ -44,7 +29,7 @@ class AuthService {
 
     if (isSuccess) {
       return this.login({
-        userNameOrEmailAddress: input.username,
+        userNameOrEmail: input.userName ?? input.emailAddress,
         password: input.password,
       });
     } else {
@@ -55,20 +40,13 @@ class AuthService {
   async logout() {
     Cookies.remove(ACCESS_TOKEN_KEY);
     Cookies.remove(REFRESH_TOKEN_KEY);
-    Cookies.remove(ACCESS_TOKEN_KEY_EXPIRES_AT);
-    Cookies.remove(REFRESH_TOKEN_KEY_EXPIRES_AT);
   }
 
   async refreshToken() {
     try {
       const refreshToken = Cookies.get(REFRESH_TOKEN_KEY);
-      const refreshTokenExpiresAt = Cookies.get(REFRESH_TOKEN_KEY_EXPIRES_AT);
 
-      if (
-        !refreshToken ||
-        !refreshTokenExpiresAt ||
-        new Date(refreshTokenExpiresAt) < new Date()
-      ) {
+      if (!refreshToken) {
         return false;
       }
 
@@ -81,12 +59,6 @@ class AuthService {
       });
 
       Cookies.set(ACCESS_TOKEN_KEY, response.data.accessToken);
-      Cookies.set(
-        ACCESS_TOKEN_KEY_EXPIRES_AT,
-        new Date(
-          Date.now() + response.data.expireInSeconds * 1000,
-        ).toISOString(),
-      );
 
       return true;
     } catch (error) {

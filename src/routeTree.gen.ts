@@ -15,6 +15,7 @@ import { Route as AuthImport } from './routes/_auth'
 import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
 import { Route as AppEstatesIndexImport } from './routes/_app/estates/index'
+import { Route as AuthAuthRegisterImport } from './routes/_auth/auth/register'
 import { Route as AuthAuthLoginImport } from './routes/_auth/auth/login'
 
 // Create/Update Routes
@@ -37,6 +38,11 @@ const IndexRoute = IndexImport.update({
 const AppEstatesIndexRoute = AppEstatesIndexImport.update({
   path: '/estates/',
   getParentRoute: () => AppRoute,
+} as any)
+
+const AuthAuthRegisterRoute = AuthAuthRegisterImport.update({
+  path: '/auth/register',
+  getParentRoute: () => AuthRoute,
 } as any)
 
 const AuthAuthLoginRoute = AuthAuthLoginImport.update({
@@ -64,6 +70,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAuthLoginImport
       parentRoute: typeof AuthImport
     }
+    '/_auth/auth/register': {
+      preLoaderRoute: typeof AuthAuthRegisterImport
+      parentRoute: typeof AuthImport
+    }
     '/_app/estates/': {
       preLoaderRoute: typeof AppEstatesIndexImport
       parentRoute: typeof AppImport
@@ -76,7 +86,7 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
   AppRoute.addChildren([AppEstatesIndexRoute]),
-  AuthRoute.addChildren([AuthAuthLoginRoute]),
+  AuthRoute.addChildren([AuthAuthLoginRoute, AuthAuthRegisterRoute]),
 ])
 
 /* prettier-ignore-end */
