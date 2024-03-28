@@ -36,14 +36,13 @@ const MainTopBar = ({ collapsed, setCollapse }: TMainTopBarProps) => {
   const toggleTheme = useAppStore((state) => state.toggleTheme);
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
-  const logout = useAuthStore((state) => state.logout);
 
   const navigate = useNavigate();
 
   const logoutMutation = useMutation({
     mutationFn: () => authService.logout(),
     onSuccess: () => {
-      logout();
+      setUser(null);
       navigate({
         to: '/auth/login',
       });
@@ -107,7 +106,13 @@ const MainTopBar = ({ collapsed, setCollapse }: TMainTopBarProps) => {
           {user?.imageUrl ? (
             <SAvatar token={token} size={48} src={user.imageUrl} />
           ) : (
-            <SAvatar token={token} size={48}>
+            <SAvatar
+              token={token}
+              size={48}
+              src={
+                'https://demoda.vn/wp-content/uploads/2022/08/hinh-anh-avatar-nu-de-thuong.jpg'
+              }
+            >
               {/* {user?.firstName.charAt(0)} */}
             </SAvatar>
           )}

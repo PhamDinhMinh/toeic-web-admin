@@ -1,1 +1,21 @@
-export const en = {};
+export const en = {
+  'Đăng nhập thành công': 'Login successful',
+  'Đăng nhập thất bại': 'Login failed',
+  'Làm ơn liên hệ với quản trị viên': 'Please contact the administrator',
+  'Đăng nhập': 'Login',
+  'Trường này là bắt buộc': 'This field is required',
+  'Tên đăng nhập hoặc email': 'Username or email',
+  'Nhập mật khẩu': 'Enter password',
+  'Bạn chưa có tài khoản': "Don't have an account",
+  'Đăng ký ngay': 'Sign up now',
+  'Đăng ký': 'Sign up',
+  'Quay lại': 'Go back',
+  'Địa chỉ email': 'Email address',
+  'Họ tên': 'Full name',
+  'Tên đăng nhập': 'Username',
+  'Số điện thoại': 'Phone number',
+  'Email không hợp lệ': 'Invalid email',
+  'Số điện thoại không hợp lệ': 'Invalid phone number',
+  'Đăng ký thành công': 'Registration successful',
+  'Đăng ký thất bại': 'Registration failed',
+};

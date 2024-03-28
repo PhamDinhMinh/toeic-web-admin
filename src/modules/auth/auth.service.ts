@@ -4,7 +4,6 @@ import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/configs/constants';
 import httpService from '@/shared/http-service';
 
 import { TLoginInput, TLoginResponse, TRegisterInput } from './auth.model';
-import { useAuthStore } from './auth.zustand';
 
 class AuthService {
   public async login(input: TLoginInput) {
@@ -38,10 +37,8 @@ class AuthService {
   }
 
   async logout() {
-    const setUser = useAuthStore((state) => state.setUser);
     Cookies.remove(ACCESS_TOKEN_KEY);
     Cookies.remove(REFRESH_TOKEN_KEY);
-    setUser(null);
   }
 }
 

@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
+import { Route as AppGrammarsIndexImport } from './routes/_app/grammars/index'
 import { Route as AppEstatesIndexImport } from './routes/_app/estates/index'
 import { Route as AuthAuthRegisterImport } from './routes/_auth/auth/register'
 import { Route as AuthAuthLoginImport } from './routes/_auth/auth/login'
@@ -33,6 +34,11 @@ const AppRoute = AppImport.update({
 const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const AppGrammarsIndexRoute = AppGrammarsIndexImport.update({
+  path: '/grammars/',
+  getParentRoute: () => AppRoute,
 } as any)
 
 const AppEstatesIndexRoute = AppEstatesIndexImport.update({
@@ -78,6 +84,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEstatesIndexImport
       parentRoute: typeof AppImport
     }
+    '/_app/grammars/': {
+      preLoaderRoute: typeof AppGrammarsIndexImport
+      parentRoute: typeof AppImport
+    }
   }
 }
 
@@ -85,7 +95,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
-  AppRoute.addChildren([AppEstatesIndexRoute]),
+  AppRoute.addChildren([AppEstatesIndexRoute, AppGrammarsIndexRoute]),
   AuthRoute.addChildren([AuthAuthLoginRoute, AuthAuthRegisterRoute]),
 ])
 
