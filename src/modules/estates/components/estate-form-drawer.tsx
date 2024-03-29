@@ -2,6 +2,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { App, Button, Drawer, Form, Input, Skeleton, Space } from 'antd';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 import estateService from '../estate.service';
 
@@ -21,6 +23,46 @@ const EstateFormDrawer: React.FC<TEstateFormDrawerProps> = ({
   refetch,
 }: TEstateFormDrawerProps) => {
   const { t } = useTranslation();
+
+  const Quill = ReactQuill.Quill;
+  const Font = Quill.import('formats/font');
+  Font.whitelist = ['Roboto', 'Raleway', 'Montserrat', 'Lato', 'Rubik'];
+  Quill.register(Font, true);
+
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, false] }],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      [{ color: [] }, { background: [] }],
+      [{ align: [] }],
+      [
+        { list: 'ordered' },
+        { list: 'bullet' },
+        { indent: '-1' },
+        { indent: '+1' },
+      ],
+      ['image'],
+      [{ script: 'sub' }, { script: 'super' }],
+    ],
+  };
+
+  const formats = [
+    'header',
+    'font',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'color',
+    'background',
+    'code',
+    'script',
+    'list',
+    'bullet',
+    'indent',
+    'image',
+  ];
 
   const { message } = App.useApp();
   const [form] = Form.useForm();
@@ -119,6 +161,10 @@ const EstateFormDrawer: React.FC<TEstateFormDrawerProps> = ({
 
           <Form.Item name="description" label={t('Description')}>
             <Input.TextArea />
+          </Form.Item>
+
+          <Form.Item name="description" label={t('Description')}>
+            <ReactQuill theme="snow" modules={modules} formats={formats} />
           </Form.Item>
         </Form>
       )}
