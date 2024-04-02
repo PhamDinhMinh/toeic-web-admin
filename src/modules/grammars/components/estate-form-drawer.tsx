@@ -14,8 +14,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 import useTranslation from '@/hooks/useTranslation';
-
-import estateService from '../estate.service';
+import estateService from '@/modules/estates/estate.service';
 
 type TEstateFormDrawerProps = {
   open: boolean;
@@ -25,7 +24,7 @@ type TEstateFormDrawerProps = {
   refetch?: () => Promise<any>;
 };
 
-const EstateFormDrawer: React.FC<TEstateFormDrawerProps> = ({
+const GrammarFormDrawer: React.FC<TEstateFormDrawerProps> = ({
   open,
   setOpen,
   action,
@@ -43,7 +42,100 @@ const EstateFormDrawer: React.FC<TEstateFormDrawerProps> = ({
     toolbar: [
       [{ header: [1, 2, 3, 4, 5, false] }],
       ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ color: [] }, { background: [] }],
+      [
+        {
+          color: [
+            '#9edc7a',
+            '#86d45a',
+            '#6fcc3a',
+            '#60bb32',
+            '#4aa728',
+            '#33931e',
+            '#204918',
+            '#FFD699',
+            '#FFC166',
+            '#FFAD33',
+            '#FF9800',
+            '#CC7A00',
+            '#995B00',
+            '#663D00',
+            '#EEEEEE',
+            '#E0E0E0',
+            '#BDBDBD',
+            '#9E9E9E',
+            '#757575',
+            '#616161',
+            '#424242',
+            '#B4A9FF',
+            '#8E7FFF',
+            '#6954FF',
+            '#4329FF',
+            '#3621CC',
+            '#281999',
+            '#1B1066',
+            '#C199FF',
+            '#A366FF',
+            '#8433FF',
+            '#6500FF',
+            '#5100CC',
+            '#3D0099',
+            '#280066',
+            '#F5A89A',
+            '#EE7C6B',
+            '#E54646',
+            '#DF0029',
+            '#C50023',
+            '#FFFFFF',
+            '#000000',
+          ],
+        },
+        {
+          background: [
+            '#9edc7a',
+            '#86d45a',
+            '#6fcc3a',
+            '#60bb32',
+            '#4aa728',
+            '#33931e',
+            '#204918',
+            '#FFD699',
+            '#FFC166',
+            '#FFAD33',
+            '#FF9800',
+            '#CC7A00',
+            '#995B00',
+            '#663D00',
+            '#EEEEEE',
+            '#E0E0E0',
+            '#BDBDBD',
+            '#9E9E9E',
+            '#757575',
+            '#616161',
+            '#424242',
+            '#B4A9FF',
+            '#8E7FFF',
+            '#6954FF',
+            '#4329FF',
+            '#3621CC',
+            '#281999',
+            '#1B1066',
+            '#C199FF',
+            '#A366FF',
+            '#8433FF',
+            '#6500FF',
+            '#5100CC',
+            '#3D0099',
+            '#280066',
+            '#F5A89A',
+            '#EE7C6B',
+            '#E54646',
+            '#DF0029',
+            '#C50023',
+            '#FFFFFF',
+            '#000000',
+          ],
+        },
+      ],
       [{ align: [] }],
       [
         { list: 'ordered' },
@@ -159,14 +251,18 @@ const EstateFormDrawer: React.FC<TEstateFormDrawerProps> = ({
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
           onFinish={(values) => {
-            action === 'create'
-              ? createMutation.mutate({
-                  ...values,
-                })
-              : updateMutation.mutate({
-                  ...values,
-                  id,
-                });
+            // action === 'create'
+            //   ? createMutation.mutate({
+            //       ...values,
+            //     })
+            //   : updateMutation.mutate({
+            //       ...values,
+            //       id,
+            //     });
+            console.log(
+              values,
+              'Xem dữ liệu gửi lên sẽ là như thế nào nhỉ hih',
+            );
           }}
         >
           <Form.Item name="title" label={t('Tiêu đề')} required>
@@ -193,4 +289,4 @@ const EstateFormDrawer: React.FC<TEstateFormDrawerProps> = ({
   );
 };
 
-export default EstateFormDrawer;
+export default GrammarFormDrawer;

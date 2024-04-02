@@ -32,7 +32,7 @@ const MainSideNav = ({ collapsed, setCollapsed }: TMainSideNavProps) => {
       {
         key: '/grammars',
         icon: <BookOpenText size={18} />,
-        label: t('Grammars'),
+        label: t('Ngữ pháp'),
       },
     ],
     [t],

@@ -1,11 +1,9 @@
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Layout, theme } from 'antd';
-import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/configs/constants';
-import { useAuthStore } from '@/modules/auth/auth.zustand';
+import { useAuth } from '@/hooks/use-auth';
 import MainSideNav from '@/shared/components/layouts/app/side-nav';
 import MainTopBar from '@/shared/components/layouts/app/top-bar';
 import { TST } from '@/shared/types/tst.type';
@@ -18,21 +16,15 @@ function AppLayout() {
   const navigate = useNavigate();
 
   const { token } = theme.useToken();
-  const tokenAuth = Cookies.get(ACCESS_TOKEN_KEY);
-
-  const userInformation = useAuthStore((state: any) => state.user);
-  const logout = useAuthStore((state: any) => state.logout);
 
   const [collapsed, setCollapsed] = useState(false);
+  const authQuery = useAuth();
 
   useEffect(() => {
-    if (!tokenAuth && !userInformation) {
-      logout();
-      Cookies.remove(ACCESS_TOKEN_KEY);
-      Cookies.remove(REFRESH_TOKEN_KEY);
+    if (authQuery.isError) {
       navigate({ to: '/auth/login' });
     }
-  }, [logout, navigate, tokenAuth, userInformation]);
+  }, [authQuery, navigate]);
 
   return (
     <Layout hasSider style={{ minHeight: '100vh' }}>

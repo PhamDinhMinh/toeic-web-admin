@@ -35,6 +35,7 @@ const MainTopBar = ({ collapsed, setCollapse }: TMainTopBarProps) => {
 
   const toggleTheme = useAppStore((state) => state.toggleTheme);
   const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
   const setUser = useAuthStore((state) => state.setUser);
 
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ const MainTopBar = ({ collapsed, setCollapse }: TMainTopBarProps) => {
   const logoutMutation = useMutation({
     mutationFn: () => authService.logout(),
     onSuccess: () => {
-      setUser(null);
+      logout();
       navigate({
         to: '/auth/login',
       });

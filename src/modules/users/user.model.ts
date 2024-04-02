@@ -1,7 +1,13 @@
 export type TUser = {
   id: number;
-  username: string;
+  userName: string;
+  name: string;
   emailAddress: string;
-  fullName: string;
-  imageUrl: string;
+  phoneNumber?: string;
+  creationTime: string;
+  role?: string;
+  dateOfBirth?: any;
+  gender?: string;
+  imageUrl?: string;
+  coverAvatarUrl?: string;
 };

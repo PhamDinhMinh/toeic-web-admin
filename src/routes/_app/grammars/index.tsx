@@ -15,18 +15,18 @@ import {
   Table,
   TablePaginationConfig,
 } from 'antd';
-import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useDebounce } from 'react-use';
 
 import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
-import EstateFormDrawer from '@/modules/estates/components/estate-form-drawer';
+import useTranslation from '@/hooks/useTranslation';
 import EstatePreviewDrawer from '@/modules/estates/components/estate-preview-drawer';
 import EstateTypeTag from '@/modules/estates/components/estate-type-tag';
 import { EEstateType } from '@/modules/estates/estate.model';
 import projectService from '@/modules/estates/estate.service';
 import estateService from '@/modules/estates/estate.service';
+import GrammarFormDrawer from '@/modules/grammars/components/estate-form-drawer';
 
 export const Route = createFileRoute('/_app/grammars/')({
   component: GrammarListPage,
@@ -40,9 +40,10 @@ type TTableParams = {
 };
 
 function GrammarListPage() {
-  const { t, antdApp } = useApp();
+  const { antdApp } = useApp();
+  const { t } = useTranslation();
 
-  useAppTitle(t('Estates'));
+  useAppTitle(t('Xác nhận'));
 
   const [tableParams, setTableParams] = useState<TTableParams>({
     pagination: {
@@ -95,10 +96,10 @@ function GrammarListPage() {
     mutationFn: (id: number) => estateService.delete(id),
     onSuccess: () => {
       getEstatesQuery.refetch();
-      antdApp.message.success(t('Deleted successfully'));
+      antdApp.message.success(t('Xoá thành công'));
     },
     onError: () => {
-      antdApp.message.error(t('An error occurred'));
+      antdApp.message.error(t('Xoá thất bại'));
     },
   });
 
@@ -106,16 +107,16 @@ function GrammarListPage() {
     mutationFn: (ids: number[]) => estateService.deleteMany(ids),
     onSuccess: () => {
       getEstatesQuery.refetch();
-      antdApp.message.success(t('Deleted successfully'));
+      antdApp.message.success(t('Xoá thành công'));
     },
     onError: () => {
-      antdApp.message.error(t('An error occurred'));
+      antdApp.message.error(t('Xoá thất bại'));
     },
   });
 
   return (
     <>
-      <EstateFormDrawer
+      <GrammarFormDrawer
         open={openFormDrawer}
         setOpen={setOpenFormDrawer}
         action={formMode}
@@ -139,7 +140,7 @@ function GrammarListPage() {
                 setFormMode('create');
               }}
             >
-              {t('Create')}
+              {t('Tạo mới')}
             </Button>
 
             <Button
@@ -148,12 +149,10 @@ function GrammarListPage() {
               disabled={selectedRowKeys.length === 0}
               onClick={() => {
                 antdApp.modal.confirm({
-                  title: t('Delete confirmation'),
-                  content: t(
-                    'Are you sure you want to delete the selected items?',
-                  ),
-                  okText: t('Yes'),
-                  cancelText: t('No'),
+                  title: t('Xác nhận xoá'),
+                  content: t('Bạn có chắc chắn muốn xoá không?'),
+                  okText: t('Xác nhận'),
+                  cancelText: t('Huỷ'),
                   onOk: async () => {
                     await deleteManyEstatesMutation.mutateAsync(
                       selectedRowKeys.map((key) => +key.toString()),
@@ -162,7 +161,7 @@ function GrammarListPage() {
                 });
               }}
             >
-              {t('Delete selected')}
+              {t('Xoá đã chọn')}
             </Button>
           </Space>
 
@@ -187,7 +186,7 @@ function GrammarListPage() {
                 </Popover> */}
 
               <Input.Search
-                placeholder={t('Search')}
+                placeholder={t('Tìm kiếm')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -209,27 +208,26 @@ function GrammarListPage() {
           }}
           columns={[
             {
-              title: t('ID'),
+              title: t('STT'),
               dataIndex: 'id',
               key: 'id',
             },
             {
-              title: t('Name'),
+              title: t('Tiêu đề'),
               dataIndex: 'name',
               key: 'name',
             },
             {
-              title: t('Type'),
+              title: t('Loại'),
               dataIndex: 'type',
               key: 'type',
               render: (type: EEstateType) => <EstateTypeTag type={type} />,
             },
             {
-              title: t('Created at'),
-              dataIndex: 'createdAt',
-              key: 'createdAt',
-              render: (value: string) =>
-                dayjs(value).format('DD/MM/YYYY - HH:mm:ss'),
+              title: t('Nội dung'),
+              dataIndex: 'type',
+              key: 'type',
+              render: (type: EEstateType) => <EstateTypeTag type={type} />,
             },
             {
               key: 'actions',
@@ -240,7 +238,7 @@ function GrammarListPage() {
                   menu={{
                     items: [
                       {
-                        label: t('View'),
+                        label: t('Xem'),
                         key: 'view',
                         icon: <EyeOutlined />,
                         onClick: () => {
@@ -249,7 +247,7 @@ function GrammarListPage() {
                         },
                       },
                       {
-                        label: t('Edit'),
+                        label: t('Chỉnh sửa'),
                         key: 'edit',
                         icon: <EditOutlined />,
                         onClick: () => {
@@ -259,18 +257,16 @@ function GrammarListPage() {
                         },
                       },
                       {
-                        label: t('Delete'),
+                        label: t('Xoá'),
                         key: 'delete',
                         icon: <DeleteOutlined />,
                         danger: true,
                         onClick: () => {
                           antdApp.modal.confirm({
-                            title: t('Delete confirmation'),
-                            content: t(
-                              'Are you sure you want to delete this item?',
-                            ),
-                            okText: t('Yes'),
-                            cancelText: t('No'),
+                            title: t('Xác nhận xoá'),
+                            content: t('Bạn có chắc chắn muốn xoá không?'),
+                            okText: t('Xác nhận'),
+                            cancelText: t('Huỷ'),
                             onOk: async () => {
                               await deleteEstateMutation.mutateAsync(
                                 +record.id,
@@ -284,7 +280,7 @@ function GrammarListPage() {
                 >
                   <Button>
                     <Space>
-                      {t('Actions')}
+                      {t('Hành động')}
                       <DownOutlined />
                     </Space>
                   </Button>
