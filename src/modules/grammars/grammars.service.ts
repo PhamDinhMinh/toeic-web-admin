@@ -1,37 +1,37 @@
 import httpService from '@/shared/http-service';
 import { TPaginated } from '@/shared/types/paginated.type';
 
-import { TCreateEstateDto } from '../estates/dto/create-estate.dto';
-import { TGetListEstateDto } from '../estates/dto/get-list-estate.dto';
-import { TEstateBasic, TEstateDetail } from './../estates/estate.model';
+import { IGrammarResponse, IParamsGet } from './grammars.model';
 
-class EstateService {
-  getList(input: TGetListEstateDto) {
-    return httpService.request<TPaginated<TEstateBasic>>({
-      url: '/api/estates/admin',
+class GrammarService {
+  endpoint = '/api/services/app/Grammar';
+
+  getList(input: IParamsGet) {
+    return httpService.request<TPaginated<IGrammarResponse>>({
+      url: this.endpoint + '/GetAll',
       method: 'GET',
       params: input,
     });
   }
 
   getDetail(id: number) {
-    return httpService.request<TEstateDetail>({
+    return httpService.request<any>({
       url: `/api/estates/admin/${id}`,
       method: 'GET',
     });
   }
 
-  create(input: TCreateEstateDto) {
-    return httpService.request<TEstateBasic>({
-      url: '/api/estates/admin',
+  create(input: any) {
+    return httpService.request<any>({
+      url: this.endpoint + '/Create',
       method: 'POST',
       data: input,
     });
   }
 
-  update(id: number, input: TEstateDetail) {
-    return httpService.request<TEstateBasic>({
-      url: `/api/estates/admin/${id}`,
+  update(input: any) {
+    return httpService.request<any>({
+      url: this.endpoint + '/Update',
       method: 'PUT',
       data: input,
     });
@@ -39,18 +39,14 @@ class EstateService {
 
   delete(id: number) {
     return httpService.request<void>({
-      url: `/api/estates/admin/${id}`,
+      url: this.endpoint + '/Delete',
       method: 'DELETE',
-    });
-  }
-
-  deleteMany(ids: number[]) {
-    return httpService.request<void>({
-      url: '/api/estates/admin/delete-many',
-      method: 'DELETE',
-      data: ids,
+      params: {
+        id: id,
+      },
     });
   }
 }
 
-export default new EstateService();
+const grammarService = new GrammarService();
+export default grammarService;

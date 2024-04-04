@@ -41,6 +41,10 @@ export const initial = {
   Xem: '',
   Xoá: '',
   'Hành động': '',
+  'Chi tiết': '',
+  'Người tạo': '',
+  'chủ đề': '',
+  'Trường này không được bỏ trống!': '',
 };
 
 export type TObj = typeof initial;

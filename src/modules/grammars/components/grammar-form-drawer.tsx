@@ -1,26 +1,20 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-  App,
-  Button,
-  Drawer,
-  Form,
-  Input,
-  Select,
-  Skeleton,
-  Space,
-} from 'antd';
-import { useEffect } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { App, Button, Drawer, Form, Input, Select, Space } from 'antd';
+import { useEffect, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 import useTranslation from '@/hooks/useTranslation';
-import estateService from '@/modules/estates/estate.service';
+import { useAuthStore } from '@/modules/auth/auth.zustand';
+
+import { IGrammarResponse } from '../grammars.model';
+import grammarService from '../grammars.service';
 
 type TEstateFormDrawerProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
   action: 'create' | 'update';
-  id?: number;
+  dataRow: IGrammarResponse;
   refetch?: () => Promise<any>;
 };
 
@@ -28,10 +22,11 @@ const GrammarFormDrawer: React.FC<TEstateFormDrawerProps> = ({
   open,
   setOpen,
   action,
-  id,
+  dataRow,
   refetch,
 }: TEstateFormDrawerProps) => {
   const { t } = useTranslation();
+  const user = useAuthStore((state) => state.user);
 
   const Quill = ReactQuill.Quill;
   const Font = Quill.import('formats/font');
@@ -168,21 +163,10 @@ const GrammarFormDrawer: React.FC<TEstateFormDrawerProps> = ({
 
   const { message } = App.useApp();
   const [form] = Form.useForm();
-
-  const getQuery = useQuery({
-    queryKey: ['/estates/detail', id],
-    enabled: !!id,
-    queryFn: () => (id ? estateService.getDetail(id) : undefined),
-  });
-
-  // useEffect(() => {
-  //   if (getQuery.data) {
-  //     const project = getQuery.data.data;
-  //   }
-  // }, [getQuery.data, form]);
+  const hiddenSubmitRef = useRef<any>();
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => estateService.create(data),
+    mutationFn: (data: any) => grammarService.create(data),
     onSuccess: async () => {
       refetch && (await refetch());
       message.success(t('Tạo mới thành công'));
@@ -196,7 +180,7 @@ const GrammarFormDrawer: React.FC<TEstateFormDrawerProps> = ({
 
   const updateMutation = useMutation({
     mutationFn: (data: any) =>
-      id ? estateService.update(id, data) : (null as any),
+      dataRow ? grammarService.update(data) : (null as any),
     onSuccess: async () => {
       refetch && (await refetch());
       message.success(t('Chỉnh sửa thành công'));
@@ -211,15 +195,22 @@ const GrammarFormDrawer: React.FC<TEstateFormDrawerProps> = ({
   useEffect(() => {
     if (action === 'create') {
       form.resetFields();
+    } else {
+      dataRow &&
+        form.setFieldsValue({
+          title: dataRow.title,
+          type: dataRow.type,
+          content: dataRow.content,
+        });
     }
-  }, [action, form]);
+  }, [action, dataRow, form]);
 
   return (
     <Drawer
       title={
         action === 'create'
-          ? t('Tạo mới') + ' ' + t('Ngữ pháp').toLowerCase()
-          : t('Chỉnh sửa') + ' ' + t('Ngữ pháp').toLowerCase()
+          ? t('Tạo mới') + ' ' + t('chủ đề').toLowerCase()
+          : t('Chỉnh sửa') + ' ' + t('chủ đề').toLowerCase()
       }
       open={open}
       onClose={() => setOpen(false)}
@@ -230,10 +221,12 @@ const GrammarFormDrawer: React.FC<TEstateFormDrawerProps> = ({
 
           <Button
             type="primary"
+            htmlType="submit"
             loading={createMutation.isPending || updateMutation.isPending}
-            disabled={getQuery.isLoading}
+            disabled={createMutation.isPending || updateMutation.isPending}
             onClick={() => {
               form.submit();
+              hiddenSubmitRef.current.click();
             }}
           >
             {t('Xác nhận')}
@@ -241,50 +234,65 @@ const GrammarFormDrawer: React.FC<TEstateFormDrawerProps> = ({
         </Space>
       }
     >
-      {getQuery.isLoading ? (
-        <Skeleton />
-      ) : (
-        <Form
-          form={form}
-          name="estates-form"
-          autoComplete="off"
-          labelCol={{ span: 6 }}
-          wrapperCol={{ span: 18 }}
-          onFinish={(values) => {
-            // action === 'create'
-            //   ? createMutation.mutate({
-            //       ...values,
-            //     })
-            //   : updateMutation.mutate({
-            //       ...values,
-            //       id,
-            //     });
-            console.log(
-              values,
-              'Xem dữ liệu gửi lên sẽ là như thế nào nhỉ hih',
-            );
-          }}
+      <Form
+        form={form}
+        name="grammar-form"
+        autoComplete="off"
+        labelCol={{ span: 4 }}
+        wrapperCol={{ span: 20 }}
+        onFinish={(values) => {
+          action === 'create'
+            ? createMutation.mutate({
+                ...values,
+                creatorId: user?.id,
+              })
+            : updateMutation.mutate({
+                ...values,
+                creatorId: dataRow?.creatorId,
+                id: dataRow.id,
+              });
+        }}
+      >
+        <Form.Item
+          name="title"
+          label={t('Tiêu đề')}
+          rules={[
+            { required: true, message: t('Trường này không được bỏ trống!') },
+          ]}
         >
-          <Form.Item name="title" label={t('Tiêu đề')} required>
-            <Input />
-          </Form.Item>
+          <Input />
+        </Form.Item>
 
-          <Form.Item name="type" label={t('Loại')}>
-            <Select
-              defaultValue={1}
-              style={{ width: 120 }}
-              options={[
-                { value: 1, label: t('Cơ bản') },
-                { value: 2, label: t('Nâng cao') },
-              ]}
+        <Form.Item name="type" label={t('Loại')}>
+          <Select
+            defaultValue={1}
+            style={{ width: 120 }}
+            options={[
+              { value: 1, label: t('Cơ bản') },
+              { value: 2, label: t('Nâng cao') },
+            ]}
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="content"
+          label={t('Nội dung')}
+          rules={[
+            { required: true, message: t('Trường này không được bỏ trống!') },
+          ]}
+        >
+          <ReactQuill theme="snow" modules={modules} formats={formats} />
+        </Form.Item>
+        <Form.Item shouldUpdate>
+          {() => (
+            <button
+              type="submit"
+              style={{ display: 'none' }}
+              ref={hiddenSubmitRef}
             />
-          </Form.Item>
-
-          <Form.Item name="content" label={t('Nội dung')} required>
-            <ReactQuill theme="snow" modules={modules} formats={formats} />
-          </Form.Item>
-        </Form>
-      )}
+          )}
+        </Form.Item>
+      </Form>
     </Drawer>
   );
 };

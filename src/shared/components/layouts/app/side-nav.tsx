@@ -1,4 +1,3 @@
-import { AppstoreOutlined } from '@ant-design/icons';
 import { useNavigate } from '@tanstack/react-router';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Typography } from 'antd';
@@ -24,11 +23,6 @@ const MainSideNav = ({ collapsed, setCollapsed }: TMainSideNavProps) => {
 
   const items: MenuProps['items'] = useMemo(
     () => [
-      {
-        key: '/estates',
-        icon: <AppstoreOutlined />,
-        label: t('Estates'),
-      },
       {
         key: '/grammars',
         icon: <BookOpenText size={18} />,

@@ -15,18 +15,17 @@ import {
   Table,
   TablePaginationConfig,
 } from 'antd';
+import { Popover, Typography } from 'antd/lib';
 import { useState } from 'react';
 import { useDebounce } from 'react-use';
 
 import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
-import EstatePreviewDrawer from '@/modules/estates/components/estate-preview-drawer';
-import EstateTypeTag from '@/modules/estates/components/estate-type-tag';
-import { EEstateType } from '@/modules/estates/estate.model';
-import projectService from '@/modules/estates/estate.service';
-import estateService from '@/modules/estates/estate.service';
-import GrammarFormDrawer from '@/modules/grammars/components/estate-form-drawer';
+import GrammarFormDrawer from '@/modules/grammars/components/grammar-form-drawer';
+import GrammarPreviewDrawer from '@/modules/grammars/components/grammar-preview-drawer';
+import EGrammarTypeTag from '@/modules/grammars/components/grammar-type-tag';
+import grammarService from '@/modules/grammars/grammars.service';
 
 export const Route = createFileRoute('/_app/grammars/')({
   component: GrammarListPage,
@@ -57,10 +56,8 @@ function GrammarListPage() {
   });
   const [openFormDrawer, setOpenFormDrawer] = useState<boolean>(false);
   const [formMode, setFormMode] = useState<'create' | 'update'>('create');
-  const [formId, setFormId] = useState<number | undefined>();
   const [openPreviewDrawer, setOpenPreviewDrawer] = useState<boolean>(false);
-  const [selectedId, setSelectedId] = useState<number | undefined>();
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [dataRow, setDataRow] = useState<any>();
   const [search, setSearch] = useState<string>('');
 
   useDebounce(
@@ -68,7 +65,7 @@ function GrammarListPage() {
       setTableParams({
         ...tableParams,
         filters: {
-          search: search,
+          keyword: search,
         },
       });
     },
@@ -76,37 +73,29 @@ function GrammarListPage() {
     [search],
   );
 
-  const getEstatesQuery = useQuery({
-    queryKey: ['/estates', tableParams.pagination, tableParams.filters],
+  const {
+    data: getListGrammarQuery,
+    refetch,
+    isFetching,
+    isLoading,
+  } = useQuery({
+    queryKey: ['/grammar-list', tableParams.pagination, tableParams.filters],
     queryFn: () =>
-      projectService.getList({
-        take: tableParams.pagination?.pageSize || 10,
-        skip:
+      grammarService.getList({
+        maxResultCount: tableParams.pagination?.pageSize || 10,
+        skipCount:
           tableParams.pagination?.current && tableParams.pagination?.pageSize
             ? (tableParams.pagination?.current - 1) *
               tableParams.pagination?.pageSize
             : 0,
         ...tableParams.filters,
-        sort: tableParams.sortField,
-        order: tableParams.sortOrder as 'ASC' | 'DESC',
       }),
   });
 
   const deleteEstateMutation = useMutation({
-    mutationFn: (id: number) => estateService.delete(id),
+    mutationFn: (id: number) => grammarService.delete(id),
     onSuccess: () => {
-      getEstatesQuery.refetch();
-      antdApp.message.success(t('Xoá thành công'));
-    },
-    onError: () => {
-      antdApp.message.error(t('Xoá thất bại'));
-    },
-  });
-
-  const deleteManyEstatesMutation = useMutation({
-    mutationFn: (ids: number[]) => estateService.deleteMany(ids),
-    onSuccess: () => {
-      getEstatesQuery.refetch();
+      refetch();
       antdApp.message.success(t('Xoá thành công'));
     },
     onError: () => {
@@ -120,14 +109,14 @@ function GrammarListPage() {
         open={openFormDrawer}
         setOpen={setOpenFormDrawer}
         action={formMode}
-        id={formId}
-        refetch={getEstatesQuery.refetch}
+        dataRow={dataRow}
+        refetch={refetch}
       />
 
-      <EstatePreviewDrawer
+      <GrammarPreviewDrawer
         open={openPreviewDrawer}
         setOpen={setOpenPreviewDrawer}
-        id={selectedId}
+        dataRow={dataRow}
       />
 
       <Space direction="vertical" style={{ width: '100%' }}>
@@ -142,49 +131,10 @@ function GrammarListPage() {
             >
               {t('Tạo mới')}
             </Button>
-
-            <Button
-              danger
-              type="dashed"
-              disabled={selectedRowKeys.length === 0}
-              onClick={() => {
-                antdApp.modal.confirm({
-                  title: t('Xác nhận xoá'),
-                  content: t('Bạn có chắc chắn muốn xoá không?'),
-                  okText: t('Xác nhận'),
-                  cancelText: t('Huỷ'),
-                  onOk: async () => {
-                    await deleteManyEstatesMutation.mutateAsync(
-                      selectedRowKeys.map((key) => +key.toString()),
-                    );
-                  },
-                });
-              }}
-            >
-              {t('Xoá đã chọn')}
-            </Button>
           </Space>
 
           <div>
             <Space direction="horizontal" style={{ width: '100%' }}>
-              {/* <Popover
-                  placement="bottomRight"
-                  trigger="click"
-                  title={t('Filter')}
-                  content={
-                    <UsersFilterForm
-                      onSubmit={(values: any) => {
-                        setTableParams({
-                          ...tableParams,
-                          filters: values,
-                        });
-                      }}
-                    />
-                  }
-                >
-                  <Button icon={<FilterOutlined />}>{t('Filter')}</Button>
-                </Popover> */}
-
               <Input.Search
                 placeholder={t('Tìm kiếm')}
                 value={search}
@@ -195,39 +145,68 @@ function GrammarListPage() {
         </Flex>
 
         <Table
-          loading={getEstatesQuery.isLoading || getEstatesQuery.isFetching}
-          dataSource={getEstatesQuery.data?.data.items || []}
+          loading={isLoading || isFetching}
+          dataSource={getListGrammarQuery?.data?.data || []}
           pagination={tableParams.pagination}
           rowKey={(record) => record.id}
           bordered
-          rowSelection={{
-            type: 'checkbox',
-            onChange: (selectedRowKeys) => {
-              setSelectedRowKeys(selectedRowKeys);
-            },
-          }}
           columns={[
             {
               title: t('STT'),
-              dataIndex: 'id',
-              key: 'id',
+              key: 'index',
+              width: 50,
+              render: (_, __, index) => {
+                const currentPage = tableParams.pagination.current || 1;
+                const pageSize = tableParams.pagination.pageSize || 10;
+                return (currentPage - 1) * pageSize + index + 1;
+              },
             },
             {
               title: t('Tiêu đề'),
-              dataIndex: 'name',
-              key: 'name',
+              dataIndex: 'title',
+              key: 'title',
+              width: 200,
             },
             {
               title: t('Loại'),
               dataIndex: 'type',
               key: 'type',
-              render: (type: EEstateType) => <EstateTypeTag type={type} />,
+              width: 100,
+              render: (type: number) => <EGrammarTypeTag type={type} />,
             },
             {
               title: t('Nội dung'),
-              dataIndex: 'type',
-              key: 'type',
-              render: (type: EEstateType) => <EstateTypeTag type={type} />,
+              dataIndex: 'content',
+              key: 'content',
+              render: (content) => (
+                <div>
+                  <div
+                    style={{
+                      maxHeight: 120,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                    dangerouslySetInnerHTML={{ __html: content }}
+                  />
+                  <Popover
+                    content={
+                      <div
+                        dangerouslySetInnerHTML={{ __html: content }}
+                        style={{
+                          maxHeight: '300px',
+                          overflow: 'auto',
+                          maxWidth: '500px',
+                        }}
+                      />
+                    }
+                    trigger="click"
+                  >
+                    <Typography style={{ cursor: 'pointer' }}>
+                      Xem thêm...
+                    </Typography>
+                  </Popover>
+                </div>
+              ),
             },
             {
               key: 'actions',
@@ -242,7 +221,7 @@ function GrammarListPage() {
                         key: 'view',
                         icon: <EyeOutlined />,
                         onClick: () => {
-                          setSelectedId(record.id);
+                          setDataRow(record);
                           setOpenPreviewDrawer(true);
                         },
                       },
@@ -252,7 +231,7 @@ function GrammarListPage() {
                         icon: <EditOutlined />,
                         onClick: () => {
                           setFormMode('update');
-                          setFormId(record.id);
+                          setDataRow(record);
                           setOpenFormDrawer(true);
                         },
                       },

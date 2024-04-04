@@ -94,7 +94,7 @@ class HttpService {
     method,
     contentType,
     paramsSerializer,
-  }: THttpRequest): Promise<THttpResponse<T>> {
+  }: THttpRequest): Promise<any> {
     const config: AxiosRequestConfig = {
       url,
       method,
@@ -107,9 +107,9 @@ class HttpService {
       paramsSerializer,
     };
 
-    const response = await this.httpWithAuth.request<THttpResponse<T>>(config);
+    const response = await this.httpWithAuth.request<any>(config);
 
-    return response.data;
+    return response;
   }
 
   async requestNoAuth<T>({
