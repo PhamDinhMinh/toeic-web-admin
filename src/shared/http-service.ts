@@ -107,7 +107,7 @@ class HttpService {
       paramsSerializer,
     };
 
-    const response = await this.httpWithAuth.request<any>(config);
+    const response = await this.httpWithAuth.request<T>(config);
 
     return response;
   }
