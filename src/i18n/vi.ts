@@ -45,6 +45,8 @@ export const initial = {
   'Người tạo': '',
   'chủ đề': '',
   'Trường này không được bỏ trống!': '',
+  'mẹo làm bài': '',
+  Part: '',
 };
 
 export type TObj = typeof initial;

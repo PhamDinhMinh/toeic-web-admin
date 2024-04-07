@@ -22,13 +22,13 @@ import { useDebounce } from 'react-use';
 import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
-import GrammarFormDrawer from '@/modules/grammars/components/grammar-form-drawer';
-import GrammarPreviewDrawer from '@/modules/grammars/components/grammar-preview-drawer';
-import EGrammarTypeTag from '@/modules/grammars/components/grammar-type-tag';
-import grammarService from '@/modules/grammars/grammars.service';
+import ExamTipsFormDrawer from '@/modules/exam-tips/components/exam-tips-form-drawer';
+import ExamTipsPreviewDrawer from '@/modules/exam-tips/components/exam-tips-preview-drawer';
+import EExamTipTypeTag from '@/modules/exam-tips/components/exam-tips-type-tag';
+import examTipsService from '@/modules/exam-tips/exam-tips.service';
 
-export const Route = createFileRoute('/_app/grammars/')({
-  component: GrammarListPage,
+export const Route = createFileRoute('/_app/exam-tips/')({
+  component: ExamTipsListPage,
 });
 
 type TTableParams = {
@@ -38,8 +38,8 @@ type TTableParams = {
   filters?: Record<string, any>;
 };
 
-function GrammarListPage() {
-  const { antdApp, isDarkTheme } = useApp();
+function ExamTipsListPage() {
+  const { antdApp } = useApp();
   const { t } = useTranslation();
 
   useAppTitle(t('Xác nhận'));
@@ -81,7 +81,7 @@ function GrammarListPage() {
   } = useQuery({
     queryKey: ['/grammar-list', tableParams.pagination, tableParams.filters],
     queryFn: () =>
-      grammarService.getList({
+      examTipsService.getList({
         maxResultCount: tableParams.pagination?.pageSize || 10,
         skipCount:
           tableParams.pagination?.current && tableParams.pagination?.pageSize
@@ -93,7 +93,7 @@ function GrammarListPage() {
   });
 
   const deleteEstateMutation = useMutation({
-    mutationFn: (id: number) => grammarService.delete(id),
+    mutationFn: (id: number) => examTipsService.delete(id),
     onSuccess: () => {
       refetch();
       antdApp.message.success(t('Xoá thành công'));
@@ -105,7 +105,7 @@ function GrammarListPage() {
 
   return (
     <>
-      <GrammarFormDrawer
+      <ExamTipsFormDrawer
         open={openFormDrawer}
         setOpen={setOpenFormDrawer}
         action={formMode}
@@ -113,7 +113,7 @@ function GrammarListPage() {
         refetch={refetch}
       />
 
-      <GrammarPreviewDrawer
+      <ExamTipsPreviewDrawer
         open={openPreviewDrawer}
         setOpen={setOpenPreviewDrawer}
         dataRow={dataRow}
@@ -172,7 +172,7 @@ function GrammarListPage() {
               dataIndex: 'type',
               key: 'type',
               width: 100,
-              render: (type: number) => <EGrammarTypeTag type={type} />,
+              render: (type: number) => <EExamTipTypeTag type={type} />,
             },
             {
               title: t('Nội dung'),
@@ -201,12 +201,7 @@ function GrammarListPage() {
                     }
                     trigger="click"
                   >
-                    <Typography
-                      style={{
-                        cursor: 'pointer',
-                        color: isDarkTheme ? 'white' : 'black',
-                      }}
-                    >
+                    <Typography style={{ cursor: 'pointer' }}>
                       Xem thêm...
                     </Typography>
                   </Popover>
@@ -284,4 +279,4 @@ function GrammarListPage() {
   );
 }
 
-export default GrammarListPage;
+export default ExamTipsListPage;

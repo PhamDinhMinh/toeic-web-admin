@@ -1,3 +1,4 @@
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { App, Button, Drawer, Form, Input, Select, Space } from 'antd';
 import { useEffect, useRef } from 'react';
@@ -7,24 +8,24 @@ import 'react-quill/dist/quill.snow.css';
 import useTranslation from '@/hooks/useTranslation';
 import { useAuthStore } from '@/modules/auth/auth.zustand';
 
-import { EGrammarType, IGrammarResponse } from '../grammars.model';
-import grammarService from '../grammars.service';
+import { EExamTipsType, IExamTipsResponse } from '../exam-tips.model';
+import examTipsService from '../exam-tips.service';
 
-type TGrammarFormDrawerProps = {
+type TExamTipsFormDrawerProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
   action: 'create' | 'update';
-  dataRow: IGrammarResponse;
+  dataRow: IExamTipsResponse;
   refetch?: () => Promise<any>;
 };
 
-const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
+const ExamTipsFormDrawer: React.FC<TExamTipsFormDrawerProps> = ({
   open,
   setOpen,
   action,
   dataRow,
   refetch,
-}: TGrammarFormDrawerProps) => {
+}: TExamTipsFormDrawerProps) => {
   const { t } = useTranslation();
   const user = useAuthStore((state) => state.user);
 
@@ -166,7 +167,7 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
   const hiddenSubmitRef = useRef<any>();
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => grammarService.create(data),
+    mutationFn: (data: any) => examTipsService.create(data),
     onSuccess: async () => {
       refetch && (await refetch());
       message.success(t('Tạo mới thành công'));
@@ -180,7 +181,7 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
 
   const updateMutation = useMutation({
     mutationFn: (data: any) =>
-      dataRow ? grammarService.update(data) : (null as any),
+      dataRow ? examTipsService.update(data) : (null as any),
     onSuccess: async () => {
       refetch && (await refetch());
       message.success(t('Chỉnh sửa thành công'));
@@ -194,23 +195,44 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
 
   useEffect(() => {
     if (action === 'create') {
-      form.resetFields();
+      form.setFieldsValue({
+        description: [{ text: '' }],
+        type: EExamTipsType.Part1,
+      });
     } else {
       dataRow &&
         form.setFieldsValue({
           title: dataRow.title,
           type: dataRow.type,
-          content: dataRow.content,
+          description: dataRow.description,
         });
     }
   }, [action, dataRow, form]);
+
+  const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 4 },
+    },
+    wrapperCol: {
+      xs: { span: 23 },
+      sm: { span: 19 },
+    },
+  };
+
+  const formItemLayoutWithOutLabel = {
+    wrapperCol: {
+      xs: { span: 23, offset: 0 },
+      sm: { span: 19, offset: 4 },
+    },
+  };
 
   return (
     <Drawer
       title={
         action === 'create'
-          ? t('Tạo mới') + ' ' + t('chủ đề').toLowerCase()
-          : t('Chỉnh sửa') + ' ' + t('chủ đề').toLowerCase()
+          ? t('Tạo mới') + ' ' + t('mẹo làm bài').toLowerCase()
+          : t('Chỉnh sửa') + ' ' + t('mẹo làm bài').toLowerCase()
       }
       open={open}
       onClose={() => setOpen(false)}
@@ -236,7 +258,7 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
     >
       <Form
         form={form}
-        name="grammar-form"
+        name="exam-tips-form"
         autoComplete="off"
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}
@@ -263,26 +285,75 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
           <Input />
         </Form.Item>
 
-        <Form.Item name="type" label={t('Loại')}>
-          <Select
-            defaultValue={1}
-            style={{ width: 120 }}
-            options={[
-              { value: EGrammarType.BASIC, label: t('Cơ bản') },
-              { value: EGrammarType.ADVANCED, label: t('Nâng cao') },
-            ]}
-          />
-        </Form.Item>
-
         <Form.Item
-          name="content"
-          label={t('Nội dung')}
+          name="type"
+          label={t('Loại')}
           rules={[
             { required: true, message: t('Trường này không được bỏ trống!') },
           ]}
         >
-          <ReactQuill theme="snow" modules={modules} formats={formats} />
+          <Select
+            defaultValue={EExamTipsType.Part1}
+            style={{ width: 120 }}
+            options={[
+              { value: EExamTipsType.Part1, label: t('Part') + ' 1' },
+              { value: EExamTipsType.Part2, label: t('Part') + ' 2' },
+              { value: EExamTipsType.Part3, label: t('Part') + ' 3' },
+              { value: EExamTipsType.Part4, label: t('Part') + ' 4' },
+              { value: EExamTipsType.Part5, label: t('Part') + ' 5' },
+              { value: EExamTipsType.Part6, label: t('Part') + ' 6' },
+              { value: EExamTipsType.Part7, label: t('Part') + ' 7' },
+            ]}
+          />
         </Form.Item>
+
+        <Form.Item label={t('Nội dung')}>
+          <Form.List name="description">
+            {(fields, { add, remove }, { errors }) => (
+              <>
+                {fields.map((field, index) => (
+                  <Space
+                    {...(index === 0
+                      ? formItemLayout
+                      : formItemLayoutWithOutLabel)}
+                    key={field.key}
+                    style={{ display: 'flex', flexDirection: 'row' }}
+                  >
+                    <Form.Item
+                      {...field}
+                      validateTrigger={['onChange', 'onBlur']}
+                      rules={[
+                        {
+                          required: true,
+                          message: t('Trường này không được bỏ trống!'),
+                        },
+                      ]}
+                      style={{ marginBottom: 30 }}
+                    >
+                      <ReactQuill
+                        theme="snow"
+                        modules={modules}
+                        formats={formats}
+                      />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(field.name)} />
+                  </Space>
+                ))}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    style={{ width: '100%' }}
+                    icon={<PlusOutlined />}
+                  >
+                    Add field
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
+        </Form.Item>
+
         <Form.Item shouldUpdate>
           {() => (
             <button
@@ -297,4 +368,4 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
   );
 };
 
-export default GrammarFormDrawer;
+export default ExamTipsFormDrawer;

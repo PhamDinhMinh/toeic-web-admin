@@ -1,7 +1,7 @@
 import { useNavigate } from '@tanstack/react-router';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Typography } from 'antd';
-import { BookOpenText } from 'lucide-react';
+import { BookOpenText, Lightbulb } from 'lucide-react';
 import { useMemo } from 'react';
 import { useLocation } from 'react-use';
 import styled from 'styled-components';
@@ -27,6 +27,11 @@ const MainSideNav = ({ collapsed, setCollapsed }: TMainSideNavProps) => {
         key: '/grammars',
         icon: <BookOpenText size={18} />,
         label: t('Ngữ pháp'),
+      },
+      {
+        key: '/exam-tips',
+        icon: <Lightbulb size={18} />,
+        label: t('Tip làm bài'),
       },
     ],
     [t],
