@@ -47,6 +47,12 @@ export const initial = {
   'Trường này không được bỏ trống!': '',
   'mẹo làm bài': '',
   Part: '',
+  'Câu đơn': '',
+  'Câu nhóm': '',
+  'Tip làm bài': '',
+  'Tổng hợp đề thi': '',
+  'Tổng hợp câu hỏi': '',
+  'Quản lý người dùng': '',
 };
 
 export type TObj = typeof initial;
