@@ -53,6 +53,20 @@ export const initial = {
   'Tổng hợp đề thi': '',
   'Tổng hợp câu hỏi': '',
   'Quản lý người dùng': '',
+  'Câu hỏi': '',
+  'Phần thi': '',
+  'Dạng bài': '',
+  'File nghe': '',
+  'Hình ảnh': '',
+  'STT câu': '',
+  'Thuộc đề': '',
+  'Giải thích': '',
+  'Đáp án': '',
+  'Đáp án đúng': '',
+  'Thêm câu trả lời': '',
+  'Nghĩa đáp án': '',
+  'Phải có đáp án đúng': '',
+  'Nên có từ 3 hoặc 4 đáp án': '',
 };
 
 export type TObj = typeof initial;

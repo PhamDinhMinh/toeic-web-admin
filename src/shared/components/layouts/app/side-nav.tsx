@@ -1,13 +1,20 @@
 import { useNavigate } from '@tanstack/react-router';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Typography } from 'antd';
-import { BookOpenText, Lightbulb } from 'lucide-react';
+import {
+  BookOpenCheck,
+  BookOpenText,
+  Lightbulb,
+  PencilRuler,
+  UserCog,
+} from 'lucide-react';
 import { useMemo } from 'react';
 import { useLocation } from 'react-use';
 import styled from 'styled-components';
 
 import { APP_NAME, SIDE_NAV_WIDTH } from '@/configs/constants';
 import useApp from '@/hooks/use-app';
+import useTranslation from '@/hooks/useTranslation';
 import { TST } from '@/shared/types/tst.type';
 
 type TMainSideNavProps = {
@@ -16,7 +23,8 @@ type TMainSideNavProps = {
 };
 
 const MainSideNav = ({ collapsed, setCollapsed }: TMainSideNavProps) => {
-  const { t, token, isDarkTheme } = useApp();
+  const { token, isDarkTheme } = useApp();
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,6 +40,21 @@ const MainSideNav = ({ collapsed, setCollapsed }: TMainSideNavProps) => {
         key: '/exam-tips',
         icon: <Lightbulb size={18} />,
         label: t('Tip làm bài'),
+      },
+      {
+        key: '/exams',
+        icon: <BookOpenCheck size={18} />,
+        label: t('Tổng hợp đề thi'),
+      },
+      {
+        key: '/question-toeic',
+        icon: <PencilRuler size={18} />,
+        label: t('Tổng hợp câu hỏi'),
+      },
+      {
+        key: '/user-setting',
+        icon: <UserCog size={18} />,
+        label: t('Quản lý người dùng'),
       },
     ],
     [t],
