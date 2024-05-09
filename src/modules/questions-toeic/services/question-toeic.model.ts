@@ -313,3 +313,28 @@ export const TypePart7 = [
     value: ETypePart7.Implication_Question,
   },
 ];
+
+export interface IQuestionSingleResponse {
+  id: number;
+  content: string;
+  partId: number;
+  imageUrl: null | string;
+  audioUrl: null | string;
+  transcription: string;
+  numberSTT: number;
+  type: number[];
+  answers: {
+    id: number;
+    content: string;
+    isBoolean: boolean;
+    transcription: string;
+  }[];
+}
+
+export interface IParamsGetSingle {
+  type?: number;
+  partId?: number;
+  keyword?: string;
+  skipCount: number;
+  maxResultCount: number;
+}

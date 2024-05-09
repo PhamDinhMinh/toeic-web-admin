@@ -1,7 +1,21 @@
 import httpService from '@/shared/http-service';
+import { TPaginated } from '@/shared/types/paginated.type';
 
-class QuestionToeic {
+import {
+  IParamsGetSingle,
+  IQuestionSingleResponse,
+} from './question-toeic.model';
+
+class QuestionToeicService {
   endpoint = '/api/services/app/Question';
+
+  getListSingleQuestion(input: IParamsGetSingle) {
+    return httpService.request<TPaginated<IQuestionSingleResponse>>({
+      url: this.endpoint + '/GetListQuestionSingle',
+      method: 'GET',
+      params: input,
+    });
+  }
 
   createSingleQuestion(input: any) {
     return httpService.request<any>({
@@ -30,5 +44,5 @@ class QuestionToeic {
   }
 }
 
-const questionToeic = new QuestionToeic();
-export default questionToeic;
+const questionToeicService = new QuestionToeicService();
+export default questionToeicService;
