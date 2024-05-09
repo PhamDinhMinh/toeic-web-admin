@@ -7,7 +7,7 @@ import useTranslation from '@/hooks/useTranslation';
 import QuestionGroup from '@/modules/questions-toeic/components/question-group';
 import QuestionGroupFormDrawer from '@/modules/questions-toeic/components/question-group-form-drawer';
 import QuestionSingle from '@/modules/questions-toeic/components/question-single';
-import QuestionFormDrawer from '@/modules/questions-toeic/components/question-single-form-drawer';
+import QuestionSingleFormDrawer from '@/modules/questions-toeic/components/question-single-form-drawer';
 
 export const Route = createFileRoute('/_app/question-toeic/')({
   component: QuestionListPage,
@@ -51,7 +51,7 @@ function QuestionListPage() {
   return (
     <>
       {stateOpen.openSingleFormDrawer && (
-        <QuestionFormDrawer
+        <QuestionSingleFormDrawer
           open={stateOpen.openSingleFormDrawer}
           setOpen={setOpenSingleFormDrawer}
           action="create"

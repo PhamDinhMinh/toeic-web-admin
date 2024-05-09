@@ -27,7 +27,7 @@ import {
   TypePart6,
   TypePart7,
 } from '../services/question-toeic.model';
-import questionToeic from '../services/question-toeic.service';
+import questionToeicService from '../services/question-toeic.service';
 
 type OptionType = {
   label: string;
@@ -42,7 +42,7 @@ type TQuestionFormDrawer = {
   refetch?: () => Promise<any>;
 };
 
-const QuestionFormDrawer: React.FC<TQuestionFormDrawer> = ({
+const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
   open,
   setOpen,
   action,
@@ -57,10 +57,17 @@ const QuestionFormDrawer: React.FC<TQuestionFormDrawer> = ({
   const { message } = App.useApp();
 
   const partId = Form.useWatch('partId', form);
-  useEffect(() => {}, [action, dataRow, form]);
+
+  useEffect(() => {
+    if (action === 'create') {
+      form.resetFields();
+    } else {
+      dataRow && form.setFieldsValue(dataRow);
+    }
+  }, [action, dataRow, form]);
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => questionToeic.createSingleQuestion(data),
+    mutationFn: (data: any) => questionToeicService.createSingleQuestion(data),
     onSuccess: async () => {
       refetch && (await refetch());
       message.success(t('Tạo mới thành công'));
@@ -333,4 +340,4 @@ const QuestionFormDrawer: React.FC<TQuestionFormDrawer> = ({
   );
 };
 
-export default QuestionFormDrawer;
+export default QuestionSingleFormDrawer;

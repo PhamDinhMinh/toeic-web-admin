@@ -24,7 +24,7 @@ import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
 import ExamTipsFormDrawer from '@/modules/exam-tips/components/exam-tips-form-drawer';
 import ExamTipsPreviewDrawer from '@/modules/exam-tips/components/exam-tips-preview-drawer';
-import EExamTipTypeTag from '@/modules/exam-tips/components/exam-tips-type-tag';
+import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
 import examTipsService from '@/modules/exam-tips/exam-tips.service';
 
 export const Route = createFileRoute('/_app/exam-tips/')({
@@ -172,7 +172,7 @@ function ExamTipsListPage() {
               dataIndex: 'type',
               key: 'type',
               width: 100,
-              render: (type: number) => <EExamTipTypeTag type={type} />,
+              render: (type: number) => <PartTypeTag type={type} />,
             },
             {
               title: t('Nội dung'),

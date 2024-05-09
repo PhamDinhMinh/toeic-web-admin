@@ -23,7 +23,7 @@ import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
 import GrammarFormDrawer from '@/modules/grammars/components/grammar-form-drawer';
 import GrammarPreviewDrawer from '@/modules/grammars/components/grammar-preview-drawer';
-import EGrammarTypeTag from '@/modules/grammars/components/grammar-type-tag';
+import GrammarTypeTag from '@/modules/grammars/components/grammar-type-tag';
 import grammarService from '@/modules/grammars/grammars.service';
 
 type TTableParams = {
@@ -168,7 +168,7 @@ function QuestionGroup() {
               dataIndex: 'type',
               key: 'type',
               width: 100,
-              render: (type: number) => <EGrammarTypeTag type={type} />,
+              render: (type: number) => <GrammarTypeTag type={type} />,
             },
             {
               title: t('Nội dung'),
