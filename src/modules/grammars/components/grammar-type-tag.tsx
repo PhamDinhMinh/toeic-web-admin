@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import { EGrammarType } from '@/modules/grammars/grammars.model';
 
-const EGrammarTypeTag = ({ type }: { type: number }) => {
+const GrammarTypeTag = ({ type }: { type: number }) => {
   const color = useMemo<string>(() => {
     switch (type) {
       case EGrammarType.BASIC:
@@ -29,4 +29,4 @@ const EGrammarTypeTag = ({ type }: { type: number }) => {
   return <Tag color={color}>{nameType}</Tag>;
 };
 
-export default EGrammarTypeTag;
+export default GrammarTypeTag;

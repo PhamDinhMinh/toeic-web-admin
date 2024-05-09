@@ -3,7 +3,7 @@ import { Button, Descriptions, Drawer, Empty } from 'antd';
 import useTranslation from '@/hooks/useTranslation';
 
 import { IGrammarResponse } from '../grammars.model';
-import EGrammarTypeTag from './grammar-type-tag';
+import GrammarTypeTag from './grammar-type-tag';
 
 type TGrammarPreviewProps = {
   open: boolean;
@@ -41,7 +41,7 @@ const GrammarPreviewDrawer: React.FC<TGrammarPreviewProps> = ({
             {
               label: t('Loại'),
               span: 2,
-              children: <EGrammarTypeTag type={dataRow.type} />,
+              children: <GrammarTypeTag type={dataRow.type} />,
             },
             {
               label: t('Người tạo'),

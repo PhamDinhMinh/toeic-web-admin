@@ -3,7 +3,7 @@ import { Button, Descriptions, Drawer, Empty } from 'antd';
 import useTranslation from '@/hooks/useTranslation';
 
 import { IExamTipsResponse } from '../exam-tips.model';
-import EExamTipTypeTag from './exam-tips-type-tag';
+import EExamTipTypeTag from './part-type-tag';
 
 type TExamTipsPreviewProps = {
   open: boolean;

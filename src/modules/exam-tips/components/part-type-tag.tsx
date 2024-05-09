@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import { EExamTipsType } from '../exam-tips.model';
 
-const EExamTipTypeTag = ({ type }: { type: number }) => {
+const PartTypeTag = ({ type }: { type: number }) => {
   const color = useMemo<string>(() => {
     switch (type) {
       case EExamTipsType.Part1:
@@ -43,4 +43,4 @@ const EExamTipTypeTag = ({ type }: { type: number }) => {
   return <Tag color={color}>{nameType}</Tag>;
 };
 
-export default EExamTipTypeTag;
+export default PartTypeTag;
