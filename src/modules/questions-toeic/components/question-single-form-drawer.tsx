@@ -1,7 +1,18 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Drawer, Flex, Form, Input, Radio, Select, Space } from 'antd';
+import { useMutation } from '@tanstack/react-query';
+import {
+  App,
+  Button,
+  Drawer,
+  Flex,
+  Form,
+  Input,
+  Radio,
+  Select,
+  Space,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 
 import useTranslation from '@/hooks/useTranslation';
@@ -16,6 +27,7 @@ import {
   TypePart6,
   TypePart7,
 } from '../services/question-toeic.model';
+import questionToeic from '../services/question-toeic.service';
 
 type OptionType = {
   label: string;
@@ -35,14 +47,30 @@ const QuestionFormDrawer: React.FC<TQuestionFormDrawer> = ({
   setOpen,
   action,
   dataRow,
+  refetch,
 }: TQuestionFormDrawer) => {
+  const uid = useId();
   const { t } = useTranslation();
 
   const [form] = Form.useForm();
   const hiddenSubmitRef = useRef<any>();
+  const { message } = App.useApp();
 
   const partId = Form.useWatch('partId', form);
   useEffect(() => {}, [action, dataRow, form]);
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => questionToeic.createSingleQuestion(data),
+    onSuccess: async () => {
+      refetch && (await refetch());
+      message.success(t('Tạo mới thành công'));
+      setOpen(false);
+      form.resetFields();
+    },
+    onError: (error) => {
+      message.error(error.message);
+    },
+  });
 
   const selectType = () => {
     switch (partId) {
@@ -74,7 +102,7 @@ const QuestionFormDrawer: React.FC<TQuestionFormDrawer> = ({
       }
       open={open}
       onClose={() => setOpen(false)}
-      width={720}
+      width={840}
       extra={
         <Space>
           <Button onClick={() => setOpen(false)}>{t('Đóng')}</Button>
@@ -99,17 +127,15 @@ const QuestionFormDrawer: React.FC<TQuestionFormDrawer> = ({
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}
         onFinish={(values) => {
-          console.log(values, 'hehe');
+          action === 'create' ? createMutation.mutate(values) : '';
         }}
       >
-        <Form.Item
+        {/* <Form.Item
           name="idExam"
           label={t('Thuộc đề')}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 8 }}
-        >
-          <Input />
-        </Form.Item>
+        ></Form.Item> */}
 
         <Form.Item
           name="partId"
@@ -193,7 +219,11 @@ const QuestionFormDrawer: React.FC<TQuestionFormDrawer> = ({
             {(fields, { add, remove }, { errors }) => (
               <>
                 {fields.map(({ key, name, ...restField }, index) => (
-                  <Flex key={key} vertical style={{ width: '100%' }}>
+                  <Flex
+                    key={uid + 'FIELD' + key}
+                    vertical
+                    style={{ width: '100%' }}
+                  >
                     <Flex
                       justify="space-between"
                       align="center"
@@ -203,7 +233,6 @@ const QuestionFormDrawer: React.FC<TQuestionFormDrawer> = ({
                     >
                       <Form.Item
                         {...restField}
-                        key={index}
                         style={{
                           width: '48%',
                           marginRight: '4%',
@@ -225,12 +254,6 @@ const QuestionFormDrawer: React.FC<TQuestionFormDrawer> = ({
                       >
                         <Input placeholder={t('Nghĩa đáp án')} />
                       </Form.Item>
-                      <Form.Item
-                        name={[name, 'sttAnswer']}
-                        {...restField}
-                        initialValue={index + 1}
-                        style={{ width: 0 }}
-                      ></Form.Item>
                     </Flex>
                     <Flex
                       justify="space-between"

@@ -1,10 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Button, Tabs, TabsProps } from 'antd';
-import { useId, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
 import QuestionGroup from '@/modules/questions-toeic/components/question-group';
+import QuestionGroupFormDrawer from '@/modules/questions-toeic/components/question-group-form-drawer';
 import QuestionSingle from '@/modules/questions-toeic/components/question-single';
 import QuestionFormDrawer from '@/modules/questions-toeic/components/question-single-form-drawer';
 
@@ -17,8 +18,19 @@ function QuestionListPage() {
 
   useAppTitle(t('Xác nhận'));
 
-  const [openSingleFormDrawer, setOpenSingleFormDrawer] =
-    useState<boolean>(false);
+  const [stateOpen, setStateOpen] = useState({
+    openSingleFormDrawer: false,
+    openGroupFormDrawer: false,
+  });
+
+  const setOpenSingleFormDrawer = useCallback((item: boolean) => {
+    setStateOpen((prev) => ({ ...prev, openSingleFormDrawer: item }));
+  }, []);
+
+  const setOpenGroupFormDrawer = useCallback((item: boolean) => {
+    setStateOpen((prev) => ({ ...prev, openGroupFormDrawer: item }));
+  }, []);
+
   const uid = useId();
 
   const [selectedTab, setSelectedTab] = useState(uid + 0);
@@ -38,10 +50,18 @@ function QuestionListPage() {
 
   return (
     <>
-      {openSingleFormDrawer && (
+      {stateOpen.openSingleFormDrawer && (
         <QuestionFormDrawer
-          open={openSingleFormDrawer}
+          open={stateOpen.openSingleFormDrawer}
           setOpen={setOpenSingleFormDrawer}
+          action="create"
+        />
+      )}
+
+      {stateOpen.openGroupFormDrawer && (
+        <QuestionGroupFormDrawer
+          open={stateOpen.openGroupFormDrawer}
+          setOpen={setOpenGroupFormDrawer}
           action="create"
         />
       )}
@@ -53,7 +73,9 @@ function QuestionListPage() {
           <Button
             type="primary"
             onClick={() => {
-              selectedTab === uid + 0 ? setOpenSingleFormDrawer(true) : '';
+              selectedTab === uid + 0
+                ? setOpenSingleFormDrawer(true)
+                : setOpenGroupFormDrawer(true);
             }}
           >
             {t('Tạo mới')}

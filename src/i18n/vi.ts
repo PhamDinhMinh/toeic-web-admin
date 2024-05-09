@@ -67,6 +67,9 @@ export const initial = {
   'Nghĩa đáp án': '',
   'Phải có đáp án đúng': '',
   'Nên có từ 3 hoặc 4 đáp án': '',
+  'Nhóm câu hỏi': '',
+  'Thêm câu hỏi': '',
+  'Câu hỏi nhóm chỉ nên từ 2-5 câu': '',
 };
 
 export type TObj = typeof initial;
