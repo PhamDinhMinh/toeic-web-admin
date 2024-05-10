@@ -24,6 +24,7 @@ import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
 
 import questionToeicService from '../services/question-toeic.service';
 import QuestionSingleFormDrawer from './question-single-form-drawer';
+import QuestionSinglePreviewDrawer from './question-single-preview-drawer';
 import TypePartTypeTag from './type-part-type-tag';
 
 type TTableParams = {
@@ -34,7 +35,7 @@ type TTableParams = {
 };
 
 function QuestionSingle() {
-  const { antdApp, isDarkTheme } = useApp();
+  const { antdApp } = useApp();
 
   const uid = useId();
   const { t } = useTranslation();
@@ -65,7 +66,7 @@ function QuestionSingle() {
   }, []);
 
   const setOpenViewFormDrawer = useCallback((item: boolean) => {
-    setStateOpen((prev) => ({ ...prev, openGroupFormDrawer: item }));
+    setStateOpen((prev) => ({ ...prev, openViewFormDrawer: item }));
   }, []);
 
   const {
@@ -113,6 +114,14 @@ function QuestionSingle() {
           action="update"
           dataRow={dataRow}
           refetch={refetch}
+        />
+      )}
+
+      {stateOpen.openViewFormDrawer && (
+        <QuestionSinglePreviewDrawer
+          open={stateOpen.openViewFormDrawer}
+          setOpen={setOpenViewFormDrawer}
+          dataRow={dataRow}
         />
       )}
 
