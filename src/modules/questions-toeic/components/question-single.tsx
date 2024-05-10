@@ -35,6 +35,7 @@ type TTableParams = {
 
 function QuestionSingle() {
   const { antdApp, isDarkTheme } = useApp();
+
   const uid = useId();
   const { t } = useTranslation();
 
@@ -162,8 +163,12 @@ function QuestionSingle() {
               title: t('Loại'),
               dataIndex: 'type',
               key: 'type',
-              render: (type: number[]) => (
-                <TypePartTypeTag partId={5} type={type} />
+              render: (type, item, index) => (
+                <TypePartTypeTag
+                  partId={item?.partId}
+                  type={type}
+                  key={index + uid}
+                />
               ),
             },
             {

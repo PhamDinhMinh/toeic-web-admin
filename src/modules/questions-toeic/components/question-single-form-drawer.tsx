@@ -16,6 +16,7 @@ import { useEffect, useId, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 
 import useTranslation from '@/hooks/useTranslation';
+import { useAppStore } from '@/modules/app/app.zustand';
 import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
 
 import {
@@ -51,6 +52,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
 }: TQuestionFormDrawer) => {
   const uid = useId();
   const { t } = useTranslation();
+  const setLoading = useAppStore((state) => state.setLoading);
 
   const [form] = Form.useForm();
   const hiddenSubmitRef = useRef<any>();
@@ -73,8 +75,10 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
       message.success(t('Tạo mới thành công'));
       setOpen(false);
       form.resetFields();
+      setLoading(false);
     },
     onError: (error) => {
+      setLoading(false);
       message.error(error.message);
     },
   });
@@ -134,6 +138,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}
         onFinish={(values) => {
+          setLoading(true);
           action === 'create' ? createMutation.mutate(values) : '';
         }}
       >

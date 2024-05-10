@@ -6,6 +6,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 import useTranslation from '@/hooks/useTranslation';
+import { useAppStore } from '@/modules/app/app.zustand';
 import { useAuthStore } from '@/modules/auth/auth.zustand';
 
 import { EExamTipsType, IExamTipsResponse } from '../exam-tips.model';
@@ -28,6 +29,7 @@ const ExamTipsFormDrawer: React.FC<TExamTipsFormDrawerProps> = ({
 }: TExamTipsFormDrawerProps) => {
   const { t } = useTranslation();
   const user = useAuthStore((state) => state.user);
+  const setLoading = useAppStore((state) => state.setLoading);
 
   const Quill = ReactQuill.Quill;
   const Font = Quill.import('formats/font');
@@ -169,12 +171,14 @@ const ExamTipsFormDrawer: React.FC<TExamTipsFormDrawerProps> = ({
   const createMutation = useMutation({
     mutationFn: (data: any) => examTipsService.create(data),
     onSuccess: async () => {
+      setLoading(false);
       refetch && (await refetch());
       message.success(t('Tạo mới thành công'));
       setOpen(false);
       form.resetFields();
     },
     onError: (error) => {
+      setLoading(false);
       message.error(error.message);
     },
   });
@@ -183,12 +187,14 @@ const ExamTipsFormDrawer: React.FC<TExamTipsFormDrawerProps> = ({
     mutationFn: (data: any) =>
       dataRow ? examTipsService.update(data) : (null as any),
     onSuccess: async () => {
+      setLoading(false);
       refetch && (await refetch());
       message.success(t('Chỉnh sửa thành công'));
       setOpen(false);
       form.resetFields();
     },
     onError: (error) => {
+      setLoading(false);
       message.error(error.message);
     },
   });
@@ -263,6 +269,7 @@ const ExamTipsFormDrawer: React.FC<TExamTipsFormDrawerProps> = ({
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}
         onFinish={(values) => {
+          setLoading(true);
           action === 'create'
             ? createMutation.mutate({
                 ...values,

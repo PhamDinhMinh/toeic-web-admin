@@ -5,6 +5,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 import useTranslation from '@/hooks/useTranslation';
+import { useAppStore } from '@/modules/app/app.zustand';
 import { useAuthStore } from '@/modules/auth/auth.zustand';
 
 import { EGrammarType, IGrammarResponse } from '../grammars.model';
@@ -27,6 +28,7 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
 }: TGrammarFormDrawerProps) => {
   const { t } = useTranslation();
   const user = useAuthStore((state) => state.user);
+  const setLoading = useAppStore((state) => state.setLoading);
 
   const Quill = ReactQuill.Quill;
   const Font = Quill.import('formats/font');
@@ -168,12 +170,14 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
   const createMutation = useMutation({
     mutationFn: (data: any) => grammarService.create(data),
     onSuccess: async () => {
+      setLoading(false);
       refetch && (await refetch());
       message.success(t('Tạo mới thành công'));
       setOpen(false);
       form.resetFields();
     },
     onError: (error) => {
+      setLoading(false);
       message.error(error.message);
     },
   });
@@ -182,12 +186,14 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
     mutationFn: (data: any) =>
       dataRow ? grammarService.update(data) : (null as any),
     onSuccess: async () => {
+      setLoading(false);
       refetch && (await refetch());
       message.success(t('Chỉnh sửa thành công'));
       setOpen(false);
       form.resetFields();
     },
     onError: (error) => {
+      setLoading(false);
       message.error(error.message);
     },
   });
@@ -241,6 +247,7 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}
         onFinish={(values) => {
+          setLoading(true);
           action === 'create'
             ? createMutation.mutate({
                 ...values,
