@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   App,
   Button,
@@ -57,6 +57,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
   const [form] = Form.useForm();
   const hiddenSubmitRef = useRef<any>();
   const { message } = App.useApp();
+  const queryClient = useQueryClient();
 
   const partId = Form.useWatch('partId', form);
 
@@ -76,6 +77,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
       setOpen(false);
       form.resetFields();
       setLoading(false);
+      queryClient.refetchQueries({ queryKey: ['/question-single-list'] });
     },
     onError: (error) => {
       setLoading(false);
