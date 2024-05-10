@@ -1,10 +1,22 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Drawer, Flex, Form, Input, Radio, Select, Space } from 'antd';
+import { useMutation } from '@tanstack/react-query';
+import {
+  App,
+  Button,
+  Drawer,
+  Flex,
+  Form,
+  Input,
+  Radio,
+  Select,
+  Space,
+} from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { useEffect, useId, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 
 import useTranslation from '@/hooks/useTranslation';
+import { useAppStore } from '@/modules/app/app.zustand';
 import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
 
 import {
@@ -16,6 +28,7 @@ import {
   TypePart6,
   TypePart7,
 } from '../services/question-toeic.model';
+import questionToeicService from '../services/question-toeic.service';
 
 type OptionType = {
   label: string;
@@ -35,8 +48,11 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
   setOpen,
   action,
   dataRow,
+  refetch,
 }: TQuestionGroupFormDrawer) => {
   const { t } = useTranslation();
+  const { message } = App.useApp();
+  const setLoading = useAppStore((state) => state.setLoading);
 
   const [form] = Form.useForm();
   const hiddenSubmitRef = useRef<any>();
@@ -65,6 +81,22 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
         return TypePart1;
     }
   };
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => questionToeicService.createGroupQuestion(data),
+    onSuccess: async () => {
+      refetch && (await refetch());
+      message.success(t('Tạo mới thành công'));
+      setOpen(false);
+      form.resetFields();
+      setLoading(false);
+      // queryClient.refetchQueries({ queryKey: ['/question-single-list'] });
+    },
+    onError: (error) => {
+      setLoading(false);
+      message.error(error.message);
+    },
+  });
 
   return (
     <Drawer
@@ -100,17 +132,18 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}
         onFinish={(values) => {
-          console.log(values, 'hehe');
+          setLoading(true);
+          action === 'create' ? createMutation.mutate(values) : '';
         }}
       >
-        <Form.Item
+        {/* <Form.Item
           name="idExam"
           label={t('Thuộc đề')}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 8 }}
         >
           <Input />
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item
           name="partId"
@@ -133,21 +166,6 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
               { value: EExamTipsType.Part6, label: t('Part') + ' 6' },
               { value: EExamTipsType.Part7, label: t('Part') + ' 7' },
             ]}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="type"
-          label={t('Dạng bài')}
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 20 }}
-          rules={[
-            { required: true, message: t('Trường này không được bỏ trống!') },
-          ]}
-        >
-          <Select
-            options={(selectType() ?? []) as OptionType[]}
-            mode="multiple"
           />
         </Form.Item>
 
@@ -210,6 +228,24 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                       </Form.Item>
 
                       <Form.Item
+                        name={[name, 'type']}
+                        label={t('Dạng bài')}
+                        labelCol={{ span: 3 }}
+                        wrapperCol={{ span: 21 }}
+                        rules={[
+                          {
+                            required: true,
+                            message: t('Trường này không được bỏ trống!'),
+                          },
+                        ]}
+                      >
+                        <Select
+                          options={(selectType() ?? []) as OptionType[]}
+                          mode="multiple"
+                        />
+                      </Form.Item>
+
+                      <Form.Item
                         name={[name, 'content']}
                         label={t('Nội dung')}
                         labelCol={{ span: 3 }}
@@ -247,44 +283,18 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                                     vertical
                                     style={{ width: '100%' }}
                                   >
-                                    <Flex
-                                      justify="space-between"
-                                      align="center"
-                                      style={{
-                                        height: '32px',
-                                      }}
+                                    <Form.Item
+                                      {...restField}
+                                      key={index}
+                                      name={[name, 'content']}
+                                      style={{ margin: 0 }}
                                     >
-                                      <Form.Item
-                                        {...restField}
-                                        key={index}
-                                        style={{
-                                          width: '48%',
-                                          marginRight: '4%',
-                                          marginBottom: 0,
-                                        }}
-                                        name={[name, 'content']}
-                                        labelCol={{ span: 0 }}
-                                      >
-                                        <Input
-                                          placeholder={
-                                            t('Đáp án') + ' ' + (index + 1)
-                                          }
-                                        />
-                                      </Form.Item>
-                                      <Form.Item
-                                        name={[name, 'transcription']}
-                                        {...restField}
-                                        style={{
-                                          width: '48%',
-                                          marginBottom: 0,
-                                        }}
-                                        labelCol={{ span: 0 }}
-                                      >
-                                        <Input
-                                          placeholder={t('Nghĩa đáp án')}
-                                        />
-                                      </Form.Item>
-                                    </Flex>
+                                      <Input
+                                        placeholder={
+                                          t('Đáp án') + ' ' + (index + 1)
+                                        }
+                                      />
+                                    </Form.Item>
                                     <Flex
                                       justify="space-between"
                                       align="center"
