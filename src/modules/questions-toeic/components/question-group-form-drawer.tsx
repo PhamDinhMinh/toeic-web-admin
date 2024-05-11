@@ -207,7 +207,7 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
               <>
                 {fields.map(({ key, name, ...restField }, index) => (
                   <Flex
-                    key={key + uid}
+                    key={key + uid + index}
                     vertical
                     style={{
                       width: '100%',
@@ -218,6 +218,7 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                   >
                     <Flex style={{ padding: '8px' }} vertical>
                       <Form.Item
+                        {...restField}
                         name={[name, 'numberSTT']}
                         label={t('STT câu')}
                         labelCol={{ span: 3 }}
@@ -235,6 +236,7 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                       </Form.Item>
 
                       <Form.Item
+                        {...restField}
                         name={[name, 'type']}
                         label={t('Dạng bài')}
                         labelCol={{ span: 3 }}
@@ -253,6 +255,7 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                       </Form.Item>
 
                       <Form.Item
+                        {...restField}
                         name={[name, 'content']}
                         label={t('Nội dung')}
                         labelCol={{ span: 3 }}
@@ -260,7 +263,11 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                         <Input />
                       </Form.Item>
 
-                      <Form.Item label={t('Đáp án')} labelCol={{ span: 3 }}>
+                      <Form.Item
+                        label={t('Đáp án')}
+                        labelCol={{ span: 3 }}
+                        {...restField}
+                      >
                         <Form.List
                           name={[name, 'answers']}
                           rules={[
