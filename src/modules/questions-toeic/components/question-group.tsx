@@ -4,27 +4,29 @@ import {
   EditOutlined,
   EyeOutlined,
 } from '@ant-design/icons';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   Button,
   Dropdown,
   Flex,
+  Image,
   Input,
   Space,
   Table,
   TablePaginationConfig,
 } from 'antd';
-import { Popover, Typography } from 'antd/lib';
-import { useId, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { useDebounce } from 'react-use';
 
 import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
-import GrammarFormDrawer from '@/modules/grammars/components/grammar-form-drawer';
-import GrammarPreviewDrawer from '@/modules/grammars/components/grammar-preview-drawer';
-import GrammarTypeTag from '@/modules/grammars/components/grammar-type-tag';
-import grammarService from '@/modules/grammars/grammars.service';
+import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
+
+import questionToeicService from '../services/question-toeic.service';
+import QuestionGroupFormDrawer from './question-group-form-drawer';
+import QuestionGroupPreviewDrawer from './question-group-preview-drawer';
+import TypePartTypeTag from './type-part-type-tag';
 
 type TTableParams = {
   pagination: TablePaginationConfig;
@@ -34,8 +36,9 @@ type TTableParams = {
 };
 
 function QuestionGroup() {
-  const { antdApp, isDarkTheme } = useApp();
+  const { antdApp } = useApp();
   const { t } = useTranslation();
+  const uid = useId();
 
   useAppTitle(t('Xác nhận'));
 
@@ -49,12 +52,21 @@ function QuestionGroup() {
       roles: [],
     },
   });
-  const [openFormDrawer, setOpenFormDrawer] = useState<boolean>(false);
-  const [formMode, setFormMode] = useState<'create' | 'update'>('create');
-  const [openPreviewDrawer, setOpenPreviewDrawer] = useState<boolean>(false);
+
+  const [stateOpen, setStateOpen] = useState({
+    openFormDrawer: false,
+    openViewFormDrawer: false,
+  });
   const [dataRow, setDataRow] = useState<any>();
   const [search, setSearch] = useState<string>('');
-  const uid = useId();
+
+  const setOpenFormDrawer = useCallback((item: boolean) => {
+    setStateOpen((prev) => ({ ...prev, openFormDrawer: item }));
+  }, []);
+
+  const setOpenViewFormDrawer = useCallback((item: boolean) => {
+    setStateOpen((prev) => ({ ...prev, openViewFormDrawer: item }));
+  }, []);
 
   useDebounce(
     () => {
@@ -70,14 +82,18 @@ function QuestionGroup() {
   );
 
   const {
-    data: getListGrammarQuery,
+    data: getListGroupQuestion,
     refetch,
     isFetching,
     isLoading,
   } = useQuery({
-    queryKey: ['/grammar-list', tableParams.pagination, tableParams.filters],
+    queryKey: [
+      '/question-group-list',
+      tableParams.pagination,
+      tableParams.filters,
+    ],
     queryFn: () =>
-      grammarService.getList({
+      questionToeicService.getListGroupQuestion({
         maxResultCount: tableParams.pagination?.pageSize || 10,
         skipCount:
           tableParams.pagination?.current && tableParams.pagination?.pageSize
@@ -88,47 +104,28 @@ function QuestionGroup() {
       }),
   });
 
-  const deleteEstateMutation = useMutation({
-    mutationFn: (id: number) => grammarService.delete(id),
-    onSuccess: () => {
-      refetch();
-      antdApp.message.success(t('Xoá thành công'));
-    },
-    onError: () => {
-      antdApp.message.error(t('Xoá thất bại'));
-    },
-  });
-
   return (
     <>
-      <GrammarFormDrawer
-        open={openFormDrawer}
-        setOpen={setOpenFormDrawer}
-        action={formMode}
-        dataRow={dataRow}
-        refetch={refetch}
-      />
+      {stateOpen.openFormDrawer && (
+        <QuestionGroupFormDrawer
+          open={stateOpen.openFormDrawer}
+          setOpen={setOpenFormDrawer}
+          action="update"
+          dataRow={dataRow}
+          refetch={refetch}
+        />
+      )}
 
-      <GrammarPreviewDrawer
-        open={openPreviewDrawer}
-        setOpen={setOpenPreviewDrawer}
-        dataRow={dataRow}
-      />
+      {stateOpen.openViewFormDrawer && (
+        <QuestionGroupPreviewDrawer
+          open={stateOpen.openViewFormDrawer}
+          setOpen={setOpenViewFormDrawer}
+          dataRow={dataRow}
+        />
+      )}
 
       <Space direction="vertical" style={{ width: '100%' }}>
-        <Flex justify="space-between">
-          <Space direction="horizontal" style={{ width: '100%' }}>
-            <Button
-              type="primary"
-              onClick={() => {
-                setOpenFormDrawer(true);
-                setFormMode('create');
-              }}
-            >
-              {t('Tạo mới')}
-            </Button>
-          </Space>
-
+        <Flex justify="flex-end">
           <div>
             <Space direction="horizontal" style={{ width: '100%' }}>
               <Input.Search
@@ -142,15 +139,17 @@ function QuestionGroup() {
 
         <Table
           loading={isLoading || isFetching}
-          dataSource={getListGrammarQuery?.data?.data || []}
+          dataSource={getListGroupQuestion?.data?.data || []}
           pagination={tableParams.pagination}
           rowKey={(record) => record.id}
           bordered
+          scroll={{ x: 1800 }}
           columns={[
             {
               title: t('STT'),
               key: 'index',
-              width: 50,
+              fixed: 'left',
+              width: 70,
               render: (_, __, index) => {
                 const currentPage = tableParams.pagination.current || 1;
                 const pageSize = tableParams.pagination.pageSize || 10;
@@ -158,61 +157,94 @@ function QuestionGroup() {
               },
             },
             {
-              title: t('Tiêu đề'),
-              dataIndex: 'title',
+              title: t('Ảnh'),
+              dataIndex: 'imageUrl',
+              width: 300,
               key: 'title',
-              width: 200,
+              render: (imageUrl) =>
+                imageUrl.map((image: string) => (
+                  <>
+                    <Image width={250} src={image} />
+                  </>
+                )),
             },
             {
-              title: t('Loại'),
-              dataIndex: 'type',
-              key: 'type',
+              title: t('Phần thi'),
+              dataIndex: 'partId',
               width: 100,
-              render: (type: number) => <GrammarTypeTag type={type} />,
+              key: 'partId',
+              render: (partId: number) => <PartTypeTag type={partId} />,
             },
             {
-              title: t('Nội dung'),
-              dataIndex: 'content',
-              key: 'content',
-              render: (content) => (
-                <div>
-                  <div
-                    style={{
-                      maxHeight: 120,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                    dangerouslySetInnerHTML={{ __html: content }}
-                  />
-                  <Popover
-                    content={
-                      <div
-                        dangerouslySetInnerHTML={{ __html: content }}
-                        style={{
-                          maxHeight: '300px',
-                          overflow: 'auto',
-                          maxWidth: '500px',
-                        }}
-                      />
-                    }
-                    trigger="click"
-                  >
-                    <Typography
-                      style={{
-                        cursor: 'pointer',
-                        color: isDarkTheme ? 'white' : 'black',
-                      }}
-                    >
-                      Xem thêm...
-                    </Typography>
-                  </Popover>
-                </div>
-              ),
+              title: t('Thuộc đề'),
+              dataIndex: 'idExam',
+              width: 100,
+              key: 'idExam',
             },
             {
+              title: t('Câu hỏi'),
+              dataIndex: 'questions',
+              key: 'questions',
+              render: (questions, rowData) => {
+                return (
+                  <div style={{}}>
+                    <Flex style={{ width: '100%' }}>
+                      <Space style={gridStyle}>{t('Dạng câu')}</Space>
+                      <Space style={{ ...gridStyle, minWidth: 100 }}>
+                        {t('Nội dung')}
+                      </Space>
+                      <Space style={gridStyle}>{t('Đáp án')}</Space>
+                      <Space style={gridStyle}>{t('Giải thích')}</Space>
+                    </Flex>
+                    {questions.map((item: any, index: number) => (
+                      <>
+                        <Flex style={{ width: '100%' }}>
+                          <Space style={gridStyle}>
+                            <TypePartTypeTag
+                              partId={rowData.partId}
+                              type={item.type}
+                              key={index + uid}
+                            />
+                          </Space>
+                          <Space
+                            style={{
+                              ...gridStyle,
+                              minWidth: 100,
+                            }}
+                          >
+                            {item.content ?? ''}
+                          </Space>
+                          <Flex style={gridStyle} vertical>
+                            {item?.answers.map((answer: any, index: number) => (
+                              <div
+                                key={index}
+                                style={{
+                                  color: answer.isBoolean
+                                    ? '#00FF00'
+                                    : 'inherit',
+                                }}
+                              >
+                                {String.fromCharCode(65 + index)}:{' '}
+                                {answer.content}
+                              </div>
+                            ))}
+                          </Flex>
+                          <Space style={gridStyle}>
+                            {item.transcription ?? ''}
+                          </Space>
+                        </Flex>
+                      </>
+                    ))}
+                  </div>
+                );
+              },
+            },
+
+            {
+              title: t('Hành động'),
               key: 'actions',
               fixed: 'right',
-              width: 100,
+              width: 150,
               render: (_, record) => (
                 <Dropdown
                   menu={{
@@ -223,7 +255,7 @@ function QuestionGroup() {
                         icon: <EyeOutlined />,
                         onClick: () => {
                           setDataRow(record);
-                          setOpenPreviewDrawer(true);
+                          setOpenViewFormDrawer(true);
                         },
                       },
                       {
@@ -231,7 +263,6 @@ function QuestionGroup() {
                         key: 'edit',
                         icon: <EditOutlined />,
                         onClick: () => {
-                          setFormMode('update');
                           setDataRow(record);
                           setOpenFormDrawer(true);
                         },
@@ -247,11 +278,7 @@ function QuestionGroup() {
                             content: t('Bạn có chắc chắn muốn xoá không?'),
                             okText: t('Xác nhận'),
                             cancelText: t('Huỷ'),
-                            onOk: async () => {
-                              await deleteEstateMutation.mutateAsync(
-                                +record.id,
-                              );
-                            },
+                            onOk: async () => {},
                           });
                         },
                       },
@@ -281,3 +308,9 @@ function QuestionGroup() {
 }
 
 export default QuestionGroup;
+
+const gridStyle: React.CSSProperties = {
+  width: '100%',
+  border: '1px solid #E0E0E0',
+  padding: '6px',
+};

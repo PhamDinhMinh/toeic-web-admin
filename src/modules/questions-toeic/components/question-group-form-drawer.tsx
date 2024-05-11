@@ -59,7 +59,14 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
   const uid = useId();
 
   const partId = Form.useWatch('partId', form);
-  useEffect(() => {}, [action, dataRow, form]);
+
+  useEffect(() => {
+    if (action === 'create') {
+      form.resetFields();
+    } else {
+      dataRow && form.setFieldsValue(dataRow);
+    }
+  }, [action, dataRow, form]);
 
   const selectType = () => {
     switch (partId) {
