@@ -79,7 +79,7 @@ function ExamTipsListPage() {
     isFetching,
     isLoading,
   } = useQuery({
-    queryKey: ['/grammar-list', tableParams.pagination, tableParams.filters],
+    queryKey: ['/exam-list', tableParams.pagination, tableParams.filters],
     queryFn: () =>
       examTipsService.getList({
         maxResultCount: tableParams.pagination?.pageSize || 10,
