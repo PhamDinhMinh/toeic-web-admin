@@ -70,6 +70,9 @@ export const initial = {
   'Nhóm câu hỏi': '',
   'Thêm câu hỏi': '',
   'Câu hỏi nhóm chỉ nên từ 2-5 câu': '',
+  'Câu trả lời': '',
+  'Dạng câu': '',
+  Ảnh: '',
 };
 
 export type TObj = typeof initial;

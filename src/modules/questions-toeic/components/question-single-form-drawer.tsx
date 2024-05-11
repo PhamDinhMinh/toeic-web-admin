@@ -18,6 +18,7 @@ import 'react-quill/dist/quill.snow.css';
 import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
 import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
+import UploadImages from '@/modules/files/components/upload-list-image';
 
 import {
   TypePart1,
@@ -141,6 +142,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
         wrapperCol={{ span: 20 }}
         onFinish={(values) => {
           setLoading(true);
+          console.log(values, '');
           action === 'create' ? createMutation.mutate(values) : '';
         }}
       >
@@ -329,8 +331,12 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
           <Input />
         </Form.Item>
 
-        <Form.Item name="imageUrl" label={t('Hình ảnh')}>
-          <Input />
+        <Form.Item
+          name="imageUrl"
+          label={t('Hình ảnh')}
+          getValueFromEvent={(event) => console.log(event, 'hu hu')}
+        >
+          <UploadImages />
         </Form.Item>
 
         <Form.Item shouldUpdate>

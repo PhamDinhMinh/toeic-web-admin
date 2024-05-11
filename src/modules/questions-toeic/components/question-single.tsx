@@ -207,6 +207,7 @@ function QuestionSingle() {
               width: 200,
             },
             {
+              title: t('Hành động'),
               key: 'actions',
               fixed: 'right',
               width: 100,
