@@ -331,7 +331,31 @@ export interface IQuestionSingleResponse {
   }[];
 }
 
-export interface IParamsGetSingle {
+export interface IQuestionGroupResponse {
+  id: number;
+  content: string | null;
+  partId: number;
+  imageUrl: string[] | null;
+  audioUrl: string;
+  idExam: number[] | null;
+  questions: {
+    id: number;
+    numberSTT: number;
+    content: string | null;
+    type: number[];
+    transcription: string | null;
+    answers: {
+      id: number;
+      idQuestion: number;
+      isBoolean: boolean;
+      content: string;
+      sttAnswer: null | number;
+      transcription: null | number;
+    }[];
+  }[];
+}
+
+export interface IParamsGet {
   type?: number;
   partId?: number;
   keyword?: string;

@@ -2,16 +2,25 @@ import httpService from '@/shared/http-service';
 import { TPaginated } from '@/shared/types/paginated.type';
 
 import {
-  IParamsGetSingle,
+  IParamsGet,
+  IQuestionGroupResponse,
   IQuestionSingleResponse,
 } from './question-toeic.model';
 
 class QuestionToeicService {
   endpoint = '/api/services/app/Question';
 
-  getListSingleQuestion(input: IParamsGetSingle) {
+  getListSingleQuestion(input: IParamsGet) {
     return httpService.request<TPaginated<IQuestionSingleResponse>>({
       url: this.endpoint + '/GetListQuestionSingle',
+      method: 'GET',
+      params: input,
+    });
+  }
+
+  getListGroupQuestion(input: IParamsGet) {
+    return httpService.request<TPaginated<IQuestionGroupResponse>>({
+      url: this.endpoint + '/GetListQuestionGroup',
       method: 'GET',
       params: input,
     });
