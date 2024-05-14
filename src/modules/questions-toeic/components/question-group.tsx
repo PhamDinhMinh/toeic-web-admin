@@ -140,7 +140,10 @@ function QuestionGroup() {
         <Table
           loading={isLoading || isFetching}
           dataSource={getListGroupQuestion?.data?.data || []}
-          pagination={tableParams.pagination}
+          pagination={{
+            ...tableParams.pagination,
+            total: getListGroupQuestion?.data?.totalRecords ?? 0,
+          }}
           rowKey={(record) => record.id}
           bordered
           scroll={{ x: 1800 }}

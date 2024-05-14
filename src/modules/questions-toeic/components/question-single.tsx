@@ -21,6 +21,7 @@ import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
 import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
+import CommonPagination from '@/shared/components/common-pagination';
 
 import questionToeicService from '../services/question-toeic.service';
 import QuestionSingleFormDrawer from './question-single-form-drawer';
@@ -52,6 +53,19 @@ function QuestionSingle() {
       roles: [],
     },
   });
+
+  const onPaginationChange = useCallback(
+    (page: number, pageSize: number) => {
+      setTableParams({
+        ...tableParams,
+        pagination: {
+          current: page,
+          pageSize: pageSize,
+        },
+      });
+    },
+    [tableParams],
+  );
 
   const [stateOpen, setStateOpen] = useState({
     openSingleFormDrawer: false,
@@ -141,14 +155,18 @@ function QuestionSingle() {
         <Table
           loading={isLoading || isFetching}
           dataSource={getListSingleQuestion?.data?.data || []}
-          pagination={tableParams.pagination}
+          pagination={{
+            ...tableParams.pagination,
+            total: getListSingleQuestion?.data?.totalRecords ?? 0,
+          }}
           rowKey={(record) => record.id}
+          scroll={{ x: 2200 }}
           bordered
           columns={[
             {
               title: t('STT'),
               key: 'index',
-              width: 40,
+              width: 70,
               render: (_, __, index) => {
                 const currentPage = tableParams.pagination.current || 1;
                 const pageSize = tableParams.pagination.pageSize || 10;
@@ -159,19 +177,19 @@ function QuestionSingle() {
               title: t('Nội dung'),
               dataIndex: 'content',
               key: 'content',
-              width: 200,
             },
             {
               title: t('Phần thi'),
               dataIndex: 'partId',
               key: 'partId',
-              width: 20,
+              width: 90,
               render: (type: number) => <PartTypeTag type={type} />,
             },
             {
               title: t('Loại'),
               dataIndex: 'type',
               key: 'type',
+              width: 250,
               render: (type, item, index) => (
                 <TypePartTypeTag
                   partId={item?.partId}
@@ -179,6 +197,18 @@ function QuestionSingle() {
                   key={index + uid}
                 />
               ),
+            },
+            {
+              title: t('Ảnh'),
+              dataIndex: 'imageUrl',
+              key: 'imageUrl',
+              width: 250,
+            },
+            {
+              title: t('File nghe'),
+              dataIndex: 'audioUrl',
+              key: 'audioUrl',
+              width: 250,
             },
             {
               title: t('Đáp án'),
@@ -198,19 +228,17 @@ function QuestionSingle() {
                   ))}
                 </div>
               ),
-              width: 200,
             },
             {
               title: t('Giải thích'),
               dataIndex: 'transcription',
               key: 'transcription',
-              width: 200,
             },
             {
               title: t('Hành động'),
               key: 'actions',
               fixed: 'right',
-              width: 100,
+              width: 200,
               render: (_, record) => (
                 <Dropdown
                   menu={{

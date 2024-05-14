@@ -147,7 +147,10 @@ function ExamTipsListPage() {
         <Table
           loading={isLoading || isFetching}
           dataSource={getListGrammarQuery?.data?.data || []}
-          pagination={tableParams.pagination}
+          pagination={{
+            ...tableParams.pagination,
+            total: getListGrammarQuery?.data?.totalRecords ?? 0,
+          }}
           rowKey={(record) => record.id}
           bordered
           columns={[
