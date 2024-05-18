@@ -18,7 +18,8 @@ import 'react-quill/dist/quill.snow.css';
 import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
 import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
-import UploadImages from '@/modules/files/components/upload-list-image';
+import UploadFile from '@/modules/files/components/upload-file';
+import fileService from '@/modules/files/services/files.service';
 
 import {
   TypePart1,
@@ -71,7 +72,21 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
   }, [action, dataRow, form]);
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => questionToeicService.createSingleQuestion(data),
+    mutationFn: async (values: any) => {
+      let dataCreate = values;
+      if (values?.audioUrl) {
+        const response = await fileService.uploadFile([values.audioUrl]);
+        form.setFieldValue('audioUrl', response.data[0]);
+        dataCreate = { ...dataCreate, audioUrl: response.data[0] };
+      }
+      if (values?.imageUrl) {
+        const mappedImages = values.imageUrl.map((i: any) => i.originFileObj);
+        const response = await fileService.uploadImages(mappedImages);
+        form.setFieldValue('imageUrl', response.data);
+        dataCreate = { ...dataCreate, imageUrl: response.data };
+      }
+      return questionToeicService.createSingleQuestion(dataCreate);
+    },
     onSuccess: async () => {
       refetch && (await refetch());
       message.success(t('Tạo mới thành công'));
@@ -124,6 +139,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
           <Button
             type="primary"
             htmlType="submit"
+            disabled={createMutation.isPending}
             onClick={() => {
               form.submit();
               hiddenSubmitRef.current.click();
@@ -142,16 +158,18 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
         wrapperCol={{ span: 20 }}
         onFinish={(values) => {
           setLoading(true);
-          console.log(values, '');
           action === 'create' ? createMutation.mutate(values) : '';
         }}
       >
-        {/* <Form.Item
+        <Form.Item
           name="idExam"
           label={t('Thuộc đề')}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 8 }}
-        ></Form.Item> */}
+          initialValue={2}
+        >
+          <Select options={[{ value: 2, label: t('Part') + ' 1' }]} />
+        </Form.Item>
 
         <Form.Item
           name="partId"
@@ -171,11 +189,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
             options={[
               { value: EExamTipsType.Part1, label: t('Part') + ' 1' },
               { value: EExamTipsType.Part2, label: t('Part') + ' 2' },
-              { value: EExamTipsType.Part3, label: t('Part') + ' 3' },
-              { value: EExamTipsType.Part4, label: t('Part') + ' 4' },
               { value: EExamTipsType.Part5, label: t('Part') + ' 5' },
-              { value: EExamTipsType.Part6, label: t('Part') + ' 6' },
-              { value: EExamTipsType.Part7, label: t('Part') + ' 7' },
             ]}
           />
         </Form.Item>
@@ -328,15 +342,11 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
         </Form.Item>
 
         <Form.Item name="audioUrl" label={t('File nghe')}>
-          <Input />
+          <UploadFile multiple={false} />
         </Form.Item>
 
-        <Form.Item
-          name="imageUrl"
-          label={t('Hình ảnh')}
-          getValueFromEvent={(event) => console.log(event, 'hu hu')}
-        >
-          <UploadImages />
+        <Form.Item name="imageUrl" label={t('Hình ảnh')}>
+          {/* <UploadImages /> */}
         </Form.Item>
 
         <Form.Item shouldUpdate>

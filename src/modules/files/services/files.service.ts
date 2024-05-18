@@ -3,19 +3,27 @@ import httpService from '@/shared/http-service';
 class FileService {
   endpoint = '/api/services/app/Upload';
 
-  uploadImages(input: any) {
-    return httpService.request<any>({
-      url: this.endpoint + '/UploadImages',
+  async uploadFile(file: any) {
+    console.log(file, 'hehe');
+    const submitData = new FormData();
+    submitData.append('files', file[0]);
+    return await httpService.request<any>({
+      url: this.endpoint + '/UploadFiles',
+      contentType: 'multipart/form-data',
       method: 'POST',
-      data: input,
+      data: submitData,
     });
   }
 
-  uploadFiles(input: any) {
-    return httpService.request<any>({
-      url: this.endpoint + '/UploadFiles',
+  async uploadImages(images = []) {
+    const submitData = new FormData();
+    images.forEach((image) => submitData.append('files', image));
+    // console.log(images, 'hehe');
+    return await httpService.request<any[]>({
+      url: this.endpoint + '/UploadImages',
+      contentType: 'multipart/form-data',
       method: 'POST',
-      data: input,
+      data: submitData,
     });
   }
 }

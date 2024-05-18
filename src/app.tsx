@@ -4,6 +4,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { App as AntdApp, ConfigProvider, Spin } from 'antd';
 import enUS from 'antd/locale/en_US';
 import viVN from 'antd/locale/vi_VN';
+import 'cropperjs/dist/cropper.css';
 import { useTranslation } from 'react-i18next';
 
 import { useAppStore } from './modules/app/app.zustand';

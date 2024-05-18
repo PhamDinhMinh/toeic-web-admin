@@ -1,11 +1,13 @@
 export enum ETypePart1 {
   Portrait_Description = 1,
   Object_Description = 2,
+  Other_Description = 3,
 }
 
 export const TypePart1 = [
   { label: 'Tranh tả người', value: ETypePart1.Portrait_Description },
-  { label: 'Tranh tả cả người và vật', value: ETypePart1.Object_Description },
+  { label: 'Tranh tả vật', value: ETypePart1.Object_Description },
+  { label: 'Tranh tả cả người và vật', value: ETypePart1.Other_Description },
 ];
 
 export enum ETypePart2 {

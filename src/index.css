@@ -1,8 +1,30 @@
-body {
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-.main-content::-webkit-scrollbar {
-  width: 0 !important;
+.App {
+  font-family: sans-serif;
+}
+
+.upload-list-inline .ant-upload-list-picture {
+  --f-columns: 2;
+  --f-gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  margin-left: calc(-1 * var(--f-gap));
+  margin-bottom: calc(-1 * var(--f-gap));
+}
+
+.upload-list-inline .ant-upload-list-picture .ant-upload-list-item {
+  margin: 0;
+}
+
+.upload-list-inline .ant-upload-list-picture > * {
+  position: relative;
+  width: calc((100% / var(--f-columns) - var(--f-gap))) !important;
+  margin-bottom: var(--f-gap) !important;
+  margin-left: var(--f-gap) !important;
 }
