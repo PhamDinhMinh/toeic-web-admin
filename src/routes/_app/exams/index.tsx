@@ -4,7 +4,8 @@ import {
   EditOutlined,
   EyeOutlined,
 } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { createFileRoute } from '@tanstack/react-router';
 import {
   Button,
   Dropdown,
@@ -14,18 +15,21 @@ import {
   Table,
   TablePaginationConfig,
 } from 'antd';
-import { useCallback, useId, useState } from 'react';
+import { Popover, Typography } from 'antd/lib';
+import { useState } from 'react';
 import { useDebounce } from 'react-use';
 
 import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
+import ExamTipsPreviewDrawer from '@/modules/exam-tips/components/exam-tips-preview-drawer';
 import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
+import examTipsService from '@/modules/exam-tips/exam-tips.service';
+import ExamFormDrawer from '@/modules/exams/components/exams-form-drawer';
 
-import questionToeicService from '../services/question-toeic.service';
-import QuestionSingleFormDrawer from './question-single-form-drawer';
-import QuestionSinglePreviewDrawer from './question-single-preview-drawer';
-import TypePartTypeTag from './type-part-type-tag';
+export const Route = createFileRoute('/_app/exams/')({
+  component: ExamTipsListPage,
+});
 
 type TTableParams = {
   pagination: TablePaginationConfig;
@@ -34,10 +38,8 @@ type TTableParams = {
   filters?: Record<string, any>;
 };
 
-function QuestionSingle() {
+function ExamTipsListPage() {
   const { antdApp } = useApp();
-
-  const uid = useId();
   const { t } = useTranslation();
 
   useAppTitle(t('Xác nhận'));
@@ -52,45 +54,11 @@ function QuestionSingle() {
       roles: [],
     },
   });
-
-  const [stateOpen, setStateOpen] = useState({
-    openSingleFormDrawer: false,
-    openViewFormDrawer: false,
-  });
-
+  const [openFormDrawer, setOpenFormDrawer] = useState<boolean>(false);
+  const [formMode, setFormMode] = useState<'create' | 'update'>('create');
+  const [openPreviewDrawer, setOpenPreviewDrawer] = useState<boolean>(false);
   const [dataRow, setDataRow] = useState<any>();
   const [search, setSearch] = useState<string>('');
-
-  const setOpenSingleFormDrawer = useCallback((item: boolean) => {
-    setStateOpen((prev) => ({ ...prev, openSingleFormDrawer: item }));
-  }, []);
-
-  const setOpenViewFormDrawer = useCallback((item: boolean) => {
-    setStateOpen((prev) => ({ ...prev, openViewFormDrawer: item }));
-  }, []);
-
-  const {
-    data: getListSingleQuestion,
-    refetch,
-    isFetching,
-    isLoading,
-  } = useQuery({
-    queryKey: [
-      '/question-single-list',
-      tableParams.pagination,
-      tableParams.filters,
-    ],
-    queryFn: () =>
-      questionToeicService.getListSingleQuestion({
-        maxResultCount: tableParams.pagination?.pageSize || 10,
-        skipCount:
-          tableParams.pagination?.current && tableParams.pagination?.pageSize
-            ? (tableParams.pagination?.current - 1) *
-              tableParams.pagination?.pageSize
-            : 0,
-        ...tableParams.filters,
-      }),
-  });
 
   useDebounce(
     () => {
@@ -105,28 +73,66 @@ function QuestionSingle() {
     [search],
   );
 
+  const {
+    data: getListGrammarQuery,
+    refetch,
+    isFetching,
+    isLoading,
+  } = useQuery({
+    queryKey: ['/exam-list', tableParams.pagination, tableParams.filters],
+    queryFn: () =>
+      examTipsService.getList({
+        maxResultCount: tableParams.pagination?.pageSize || 10,
+        skipCount:
+          tableParams.pagination?.current && tableParams.pagination?.pageSize
+            ? (tableParams.pagination?.current - 1) *
+              tableParams.pagination?.pageSize
+            : 0,
+        ...tableParams.filters,
+      }),
+  });
+
+  const deleteEstateMutation = useMutation({
+    mutationFn: (id: number) => examTipsService.delete(id),
+    onSuccess: () => {
+      refetch();
+      antdApp.message.success(t('Xoá thành công'));
+    },
+    onError: () => {
+      antdApp.message.error(t('Xoá thất bại'));
+    },
+  });
+
   return (
     <>
-      {stateOpen.openSingleFormDrawer && (
-        <QuestionSingleFormDrawer
-          open={stateOpen.openSingleFormDrawer}
-          setOpen={setOpenSingleFormDrawer}
-          action="update"
-          dataRow={dataRow}
-          refetch={refetch}
-        />
-      )}
+      <ExamFormDrawer
+        open={openFormDrawer}
+        setOpen={setOpenFormDrawer}
+        action={formMode}
+        dataRow={dataRow}
+        refetch={refetch}
+      />
 
-      {stateOpen.openViewFormDrawer && (
-        <QuestionSinglePreviewDrawer
-          open={stateOpen.openViewFormDrawer}
-          setOpen={setOpenViewFormDrawer}
-          dataRow={dataRow}
-        />
-      )}
+      <ExamTipsPreviewDrawer
+        open={openPreviewDrawer}
+        setOpen={setOpenPreviewDrawer}
+        dataRow={dataRow}
+      />
 
       <Space direction="vertical" style={{ width: '100%' }}>
-        <Flex justify="flex-end">
+        <Flex justify="space-between">
+          <Space direction="horizontal" style={{ width: '100%' }}>
+            <Button
+              type="primary"
+              onClick={() => {
+                setOpenFormDrawer(true);
+                setFormMode('create');
+              }}
+            >
+              {t('Tạo mới')}
+            </Button>
+          </Space>
+
           <div>
             <Space direction="horizontal" style={{ width: '100%' }}>
               <Input.Search
@@ -140,19 +146,18 @@ function QuestionSingle() {
 
         <Table
           loading={isLoading || isFetching}
-          dataSource={getListSingleQuestion?.data?.data || []}
+          dataSource={getListGrammarQuery?.data?.data || []}
           pagination={{
             ...tableParams.pagination,
-            total: getListSingleQuestion?.data?.totalRecords ?? 0,
+            total: getListGrammarQuery?.data?.totalRecords ?? 0,
           }}
           rowKey={(record) => record.id}
-          scroll={{ x: 2200 }}
           bordered
           columns={[
             {
               title: t('STT'),
               key: 'index',
-              width: 70,
+              width: 50,
               render: (_, __, index) => {
                 const currentPage = tableParams.pagination.current || 1;
                 const pageSize = tableParams.pagination.pageSize || 10;
@@ -160,71 +165,57 @@ function QuestionSingle() {
               },
             },
             {
-              title: t('Nội dung'),
-              dataIndex: 'content',
-              key: 'content',
-            },
-            {
-              title: t('Phần thi'),
-              dataIndex: 'partId',
-              key: 'partId',
-              width: 90,
-              render: (type: number) => <PartTypeTag type={type} />,
+              title: t('Tiêu đề'),
+              dataIndex: 'title',
+              key: 'title',
+              width: 200,
             },
             {
               title: t('Loại'),
               dataIndex: 'type',
               key: 'type',
-              width: 250,
-              render: (type, item, index) => (
-                <TypePartTypeTag
-                  partId={item?.partId}
-                  type={type}
-                  key={index + uid}
-                />
-              ),
+              width: 100,
+              render: (type: number) => <PartTypeTag type={type} />,
             },
             {
-              title: t('Ảnh'),
-              dataIndex: 'imageUrl',
-              key: 'imageUrl',
-              width: 250,
-            },
-            {
-              title: t('File nghe'),
-              dataIndex: 'audioUrl',
-              key: 'audioUrl',
-              width: 250,
-            },
-            {
-              title: t('Đáp án'),
-              dataIndex: 'answers',
-              key: 'answers',
-              render: (answers) => (
+              title: t('Nội dung'),
+              dataIndex: 'content',
+              key: 'content',
+              render: (content) => (
                 <div>
-                  {answers.map((answer: any, index: number) => (
-                    <div
-                      key={index}
-                      style={{
-                        color: answer.isBoolean ? '#00FF00' : 'inherit',
-                      }}
-                    >
-                      {String.fromCharCode(65 + index)}: {answer.content}
-                    </div>
-                  ))}
+                  <div
+                    style={{
+                      maxHeight: 120,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                    dangerouslySetInnerHTML={{ __html: content }}
+                  />
+                  <Popover
+                    content={
+                      <div
+                        dangerouslySetInnerHTML={{ __html: content }}
+                        style={{
+                          maxHeight: '300px',
+                          overflow: 'auto',
+                          maxWidth: '500px',
+                        }}
+                      />
+                    }
+                    trigger="click"
+                  >
+                    <Typography style={{ cursor: 'pointer' }}>
+                      Xem thêm...
+                    </Typography>
+                  </Popover>
                 </div>
               ),
-            },
-            {
-              title: t('Giải thích'),
-              dataIndex: 'transcription',
-              key: 'transcription',
             },
             {
               title: t('Hành động'),
               key: 'actions',
               fixed: 'right',
-              width: 200,
+              width: 100,
               render: (_, record) => (
                 <Dropdown
                   menu={{
@@ -235,7 +226,7 @@ function QuestionSingle() {
                         icon: <EyeOutlined />,
                         onClick: () => {
                           setDataRow(record);
-                          setOpenViewFormDrawer(true);
+                          setOpenPreviewDrawer(true);
                         },
                       },
                       {
@@ -243,8 +234,9 @@ function QuestionSingle() {
                         key: 'edit',
                         icon: <EditOutlined />,
                         onClick: () => {
+                          setFormMode('update');
                           setDataRow(record);
-                          setOpenSingleFormDrawer(true);
+                          setOpenFormDrawer(true);
                         },
                       },
                       {
@@ -258,7 +250,11 @@ function QuestionSingle() {
                             content: t('Bạn có chắc chắn muốn xoá không?'),
                             okText: t('Xác nhận'),
                             cancelText: t('Huỷ'),
-                            onOk: async () => {},
+                            onOk: async () => {
+                              await deleteEstateMutation.mutateAsync(
+                                +record.id,
+                              );
+                            },
                           });
                         },
                       },
@@ -287,4 +283,4 @@ function QuestionSingle() {
   );
 }
 
-export default QuestionSingle;
+export default ExamTipsListPage;

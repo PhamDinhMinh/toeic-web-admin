@@ -134,7 +134,7 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
     >
       <Form
         form={form}
-        name="question-single-form"
+        name="question-group-form"
         autoComplete="off"
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}

@@ -19,6 +19,7 @@ import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
 import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
 import UploadFile from '@/modules/files/components/upload-file';
+import UploadImages from '@/modules/files/components/upload-list-image';
 import fileService from '@/modules/files/services/files.service';
 
 import {
@@ -346,7 +347,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
         </Form.Item>
 
         <Form.Item name="imageUrl" label={t('Hình ảnh')}>
-          {/* <UploadImages /> */}
+          <UploadImages />
         </Form.Item>
 
         <Form.Item shouldUpdate>

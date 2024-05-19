@@ -73,6 +73,22 @@ export const initial = {
   'Câu trả lời': '',
   'Dạng câu': '',
   Ảnh: '',
+  'đề thi': '',
+  'Tên đề thi': '',
+  'Câu hỏi part1': '',
+  'Câu hỏi part2': '',
+  'Câu hỏi part3': '',
+  'Câu hỏi part4': '',
+  'Câu hỏi part5': '',
+  'Câu hỏi part6': '',
+  'Câu hỏi part7': '',
+  'Part 1 chỉ có 6 câu hỏi': '',
+  'Part 2 chỉ có 25 câu hỏi': '',
+  'Part 3 chỉ có 39 câu hỏi': '',
+  'Part 4 chỉ có 30 câu hỏi': '',
+  'Part 5 chỉ có 30 câu hỏi': '',
+  'Part 6 chỉ có 16 câu hỏi': '',
+  'Part 7 chỉ có 54 câu hỏi': '',
 };
 
 export type TObj = typeof initial;
