@@ -51,7 +51,6 @@ function ExamTipsListPage() {
     },
     filters: {
       search: '',
-      roles: [],
     },
   });
   const [openFormDrawer, setOpenFormDrawer] = useState<boolean>(false);

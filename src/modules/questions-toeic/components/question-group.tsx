@@ -16,6 +16,8 @@ import {
   TablePaginationConfig,
 } from 'antd';
 import { useCallback, useId, useState } from 'react';
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
 import { useDebounce } from 'react-use';
 
 import useApp from '@/hooks/use-app';
@@ -48,8 +50,7 @@ function QuestionGroup() {
       pageSize: 10,
     },
     filters: {
-      search: '',
-      roles: [],
+      keyword: '',
     },
   });
 
@@ -146,7 +147,7 @@ function QuestionGroup() {
           }}
           rowKey={(record) => record.id}
           bordered
-          scroll={{ x: 1800 }}
+          scroll={{ x: 2200 }}
           columns={[
             {
               title: t('STT'),
@@ -170,6 +171,25 @@ function QuestionGroup() {
                     <Image width={250} src={image} />
                   </>
                 )),
+            },
+            {
+              title: t('File nghe'),
+              dataIndex: 'audioUrl',
+              key: 'audioUrl',
+              width: 350,
+              render: (audioUrl) => (
+                <>
+                  {audioUrl && (
+                    <AudioPlayer
+                      style={{ borderRadius: '1rem' }}
+                      src={audioUrl}
+                      showSkipControls={false}
+                      showJumpControls={false}
+                      preload="none"
+                    />
+                  )}
+                </>
+              ),
             },
             {
               title: t('Phần thi'),
@@ -223,12 +243,12 @@ function QuestionGroup() {
                                 key={index}
                                 style={{
                                   color: answer.isBoolean
-                                    ? '#00FF00'
+                                    ? 'rgb(36, 208, 163)'
                                     : 'inherit',
                                 }}
                               >
                                 {String.fromCharCode(65 + index)}:{' '}
-                                {answer.content}
+                                {answer.content ?? ''}
                               </div>
                             ))}
                           </Flex>

@@ -43,6 +43,7 @@ function ExamTipsListPage() {
   const { t } = useTranslation();
 
   useAppTitle(t('Xác nhận'));
+  const [search, setSearch] = useState<string>('');
 
   const [tableParams, setTableParams] = useState<TTableParams>({
     pagination: {
@@ -50,15 +51,13 @@ function ExamTipsListPage() {
       pageSize: 10,
     },
     filters: {
-      search: '',
-      roles: [],
+      keyword: search,
     },
   });
   const [openFormDrawer, setOpenFormDrawer] = useState<boolean>(false);
   const [formMode, setFormMode] = useState<'create' | 'update'>('create');
   const [openPreviewDrawer, setOpenPreviewDrawer] = useState<boolean>(false);
   const [dataRow, setDataRow] = useState<any>();
-  const [search, setSearch] = useState<string>('');
 
   useDebounce(
     () => {

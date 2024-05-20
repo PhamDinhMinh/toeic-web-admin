@@ -51,7 +51,6 @@ function GrammarListPage() {
     },
     filters: {
       search: '',
-      roles: [],
     },
   });
   const [openFormDrawer, setOpenFormDrawer] = useState<boolean>(false);

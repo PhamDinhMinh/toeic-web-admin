@@ -29,6 +29,7 @@
     "react": "^18.2.0",
     "react-cropper": "^2.3.3",
     "react-dom": "^18.2.0",
+    "react-h5-audio-player": "^3.9.1",
     "react-i18next": "^13.5.0",
     "react-quill": "^2.0.0",
     "react-use": "^17.4.2",

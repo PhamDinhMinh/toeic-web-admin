@@ -59,7 +59,9 @@ const QuestionSinglePreviewDrawer: React.FC<TQuestionSinglePreviewProps> = ({
                     <div
                       key={index}
                       style={{
-                        color: answer.isBoolean ? '#00FF00' : 'inherit',
+                        color: answer.isBoolean
+                          ? 'rgb(36, 208, 163)'
+                          : 'inherit',
                       }}
                     >
                       {String.fromCharCode(65 + index)}: {answer.content}

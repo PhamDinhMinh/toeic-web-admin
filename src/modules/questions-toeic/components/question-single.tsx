@@ -9,12 +9,15 @@ import {
   Button,
   Dropdown,
   Flex,
+  Image,
   Input,
   Space,
   Table,
   TablePaginationConfig,
 } from 'antd';
 import { useCallback, useId, useState } from 'react';
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
 import { useDebounce } from 'react-use';
 
 import useApp from '@/hooks/use-app';
@@ -48,8 +51,7 @@ function QuestionSingle() {
       pageSize: 10,
     },
     filters: {
-      search: '',
-      roles: [],
+      keyword: '',
     },
   });
 
@@ -188,13 +190,39 @@ function QuestionSingle() {
               title: t('Ảnh'),
               dataIndex: 'imageUrl',
               key: 'imageUrl',
+              render: (images) => (
+                <>
+                  {images && images.length >= 1 && (
+                    <Image
+                      wrapperStyle={{ flexShrink: 0, border: '1px solid #eee' }}
+                      preview={{ src: images[0] }}
+                      src={images[0]}
+                      style={{ objectFit: 'contain', maxHeight: 250 }}
+                    />
+                  )}
+                </>
+              ),
               width: 250,
+              align: 'center',
             },
             {
               title: t('File nghe'),
               dataIndex: 'audioUrl',
               key: 'audioUrl',
-              width: 250,
+              width: 350,
+              render: (audioUrl) => (
+                <>
+                  {audioUrl && (
+                    <AudioPlayer
+                      style={{ borderRadius: '1rem' }}
+                      src={audioUrl}
+                      showSkipControls={false}
+                      showJumpControls={false}
+                      preload="none"
+                    />
+                  )}
+                </>
+              ),
             },
             {
               title: t('Đáp án'),
@@ -206,7 +234,9 @@ function QuestionSingle() {
                     <div
                       key={index}
                       style={{
-                        color: answer.isBoolean ? '#00FF00' : 'inherit',
+                        color: answer.isBoolean
+                          ? 'rgb(36, 208, 163)'
+                          : 'inherit',
                       }}
                     >
                       {String.fromCharCode(65 + index)}: {answer.content}

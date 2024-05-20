@@ -54,6 +54,7 @@ export enum ETypePart3 {
   Order_Delivery = 13,
   Transportation = 14,
   Request_Suggestion = 15,
+  Location_Question = 16,
 }
 
 export const TypePart3 = [
@@ -96,6 +97,10 @@ export const TypePart3 = [
   { label: 'Chủ đề: Order, delivery', value: ETypePart3.Order_Delivery },
   { label: 'Chủ đề: Transportation', value: ETypePart3.Transportation },
   { label: 'Câu hỏi về yêu cầu, gợi ý', value: ETypePart3.Request_Suggestion },
+  {
+    label: 'Câu hỏi về địa điểm hội thoại',
+    value: ETypePart3.Location_Question,
+  },
 ];
 
 export enum ETypePart4 {

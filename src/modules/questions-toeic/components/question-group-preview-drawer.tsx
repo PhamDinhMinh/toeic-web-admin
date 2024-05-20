@@ -92,7 +92,7 @@ const QuestionGroupPreviewDrawer: React.FC<TQuestionGroupPreviewProps> = ({
                                       key={index + uid + 'answers'}
                                       style={{
                                         color: answer.isBoolean
-                                          ? '#00FF00'
+                                          ? 'rgb(36, 208, 163)'
                                           : 'inherit',
                                       }}
                                     >

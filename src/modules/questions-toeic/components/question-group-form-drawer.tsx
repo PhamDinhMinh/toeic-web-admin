@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   App,
   Button,
@@ -18,6 +18,9 @@ import 'react-quill/dist/quill.snow.css';
 import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
 import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
+import UploadFile from '@/modules/files/components/upload-file';
+import UploadImages from '@/modules/files/components/upload-list-image';
+import fileService from '@/modules/files/services/files.service';
 
 import {
   TypePart1,
@@ -57,6 +60,7 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
   const [form] = Form.useForm();
   const hiddenSubmitRef = useRef<any>();
   const uid = useId();
+  const queryClient = useQueryClient();
 
   const partId = Form.useWatch('partId', form);
 
@@ -90,14 +94,28 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
   };
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => questionToeicService.createGroupQuestion(data),
+    mutationFn: async (values: any) => {
+      let dataCreate = values;
+      if (values?.audioUrl) {
+        const response = await fileService.uploadFile([values.audioUrl]);
+        form.setFieldValue('audioUrl', response.data[0]);
+        dataCreate = { ...dataCreate, audioUrl: response.data[0] };
+      }
+      if (values?.imageUrl) {
+        const mappedImages = values.imageUrl.map((i: any) => i.originFileObj);
+        const response = await fileService.uploadImages(mappedImages);
+        form.setFieldValue('imageUrl', response.data);
+        dataCreate = { ...dataCreate, imageUrl: response.data };
+      }
+      return questionToeicService.createGroupQuestion(dataCreate);
+    },
     onSuccess: async () => {
       refetch && (await refetch());
       message.success(t('Tạo mới thành công'));
       setOpen(false);
       form.resetFields();
       setLoading(false);
-      // queryClient.refetchQueries({ queryKey: ['/question-single-list'] });
+      queryClient.refetchQueries({ queryKey: ['/question-group-list'] });
     },
     onError: (error) => {
       setLoading(false);
@@ -177,11 +195,15 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
         </Form.Item>
 
         <Form.Item name="audioUrl" label={t('File nghe')}>
-          <Input />
+          <UploadFile multiple={false} />
         </Form.Item>
 
         <Form.Item name="imageUrl" label={t('Hình ảnh')}>
-          <Input />
+          <UploadImages />
+        </Form.Item>
+
+        <Form.Item name="transcription" label={t('Giải thích')}>
+          <TextArea rows={4} />
         </Form.Item>
 
         <Form.Item label={t('Câu hỏi')}>
