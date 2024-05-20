@@ -57,7 +57,7 @@ const QuestionSinglePreviewDrawer: React.FC<TQuestionSinglePreviewProps> = ({
                 <div>
                   {dataRow.answers.map((answer: any, index: number) => (
                     <div
-                      key={index}
+                      key={index + uid + 'answers'}
                       style={{
                         color: answer.isBoolean
                           ? 'rgb(36, 208, 163)'

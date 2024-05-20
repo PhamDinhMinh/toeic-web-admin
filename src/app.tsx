@@ -43,7 +43,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <AntdApp>
         <ConfigProvider theme={theme} locale={locale}>
-          <Spin fullscreen spinning={loading} />
+          <Spin fullscreen spinning={loading} style={{ zIndex: 1000 }} />
           <RouterProvider router={router} />
         </ConfigProvider>
       </AntdApp>

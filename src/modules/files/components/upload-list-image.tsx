@@ -29,7 +29,7 @@ const UploadImages = ({ value = [], onChange, ...props }: TUploadProps) => {
       listType="picture"
       beforeUpload={() => false}
       className="upload-list-inline"
-      itemRender={(_, file, fileList, { remove }) => {
+      itemRender={(_, file, _fileList, { remove }) => {
         return (
           <UploadItem
             key={String(file?.originFileObj)}

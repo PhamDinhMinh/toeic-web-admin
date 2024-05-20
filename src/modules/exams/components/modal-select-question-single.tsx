@@ -1,34 +1,15 @@
-import {
-  DeleteOutlined,
-  DownOutlined,
-  EditOutlined,
-  EyeOutlined,
-} from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import {
-  Button,
-  Dropdown,
-  Flex,
-  Image,
-  Input,
-  Space,
-  Table,
-  TablePaginationConfig,
-} from 'antd';
-import { useCallback, useId, useState } from 'react';
+import { Flex, Image, Input, Space, Table, TablePaginationConfig } from 'antd';
+import { useId, useState } from 'react';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 import { useDebounce } from 'react-use';
 
-import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
 import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
-
-import questionToeicService from '../services/question-toeic.service';
-import QuestionSingleFormDrawer from './question-single-form-drawer';
-import QuestionSinglePreviewDrawer from './question-single-preview-drawer';
-import TypePartTypeTag from './type-part-type-tag';
+import TypePartTypeTag from '@/modules/questions-toeic/components/type-part-type-tag';
+import questionToeicService from '@/modules/questions-toeic/services/question-toeic.service';
 
 type TTableParams = {
   pagination: TablePaginationConfig;
@@ -37,9 +18,7 @@ type TTableParams = {
   filters?: Record<string, any>;
 };
 
-function QuestionSingle() {
-  const { antdApp } = useApp();
-
+function ModalSelectQuestionSingle() {
   const uid = useId();
   const { t } = useTranslation();
 
@@ -55,25 +34,10 @@ function QuestionSingle() {
     },
   });
 
-  const [stateOpen, setStateOpen] = useState({
-    openSingleFormDrawer: false,
-    openViewFormDrawer: false,
-  });
-
-  const [dataRow, setDataRow] = useState<any>();
   const [search, setSearch] = useState<string>('');
-
-  const setOpenSingleFormDrawer = useCallback((item: boolean) => {
-    setStateOpen((prev) => ({ ...prev, openSingleFormDrawer: item }));
-  }, []);
-
-  const setOpenViewFormDrawer = useCallback((item: boolean) => {
-    setStateOpen((prev) => ({ ...prev, openViewFormDrawer: item }));
-  }, []);
 
   const {
     data: getListSingleQuestion,
-    refetch,
     isFetching,
     isLoading,
   } = useQuery({
@@ -109,25 +73,15 @@ function QuestionSingle() {
 
   return (
     <>
-      {stateOpen.openSingleFormDrawer && (
-        <QuestionSingleFormDrawer
-          open={stateOpen.openSingleFormDrawer}
-          setOpen={setOpenSingleFormDrawer}
-          action="update"
-          dataRow={dataRow}
-          refetch={refetch}
-        />
-      )}
-
-      {stateOpen.openViewFormDrawer && (
-        <QuestionSinglePreviewDrawer
-          open={stateOpen.openViewFormDrawer}
-          setOpen={setOpenViewFormDrawer}
-          dataRow={dataRow}
-        />
-      )}
-
-      <Space direction="vertical" style={{ width: '100%' }}>
+      <Space
+        direction="vertical"
+        style={{
+          width: '100%',
+          height: screen.height - 100,
+          overflow: 'scroll',
+          marginTop: 1,
+        }}
+      >
         <Flex justify="flex-end">
           <div>
             <Space direction="horizontal" style={{ width: '100%' }}>
@@ -250,60 +204,6 @@ function QuestionSingle() {
               dataIndex: 'transcription',
               key: 'transcription',
             },
-            {
-              title: t('Hành động'),
-              key: 'actions',
-              fixed: 'right',
-              width: 200,
-              render: (_, record) => (
-                <Dropdown
-                  menu={{
-                    items: [
-                      {
-                        label: t('Xem'),
-                        key: 'view',
-                        icon: <EyeOutlined />,
-                        onClick: () => {
-                          setDataRow(record);
-                          setOpenViewFormDrawer(true);
-                        },
-                      },
-                      {
-                        label: t('Chỉnh sửa'),
-                        key: 'edit',
-                        icon: <EditOutlined />,
-                        onClick: () => {
-                          setDataRow(record);
-                          setOpenSingleFormDrawer(true);
-                        },
-                      },
-                      {
-                        label: t('Xoá'),
-                        key: 'delete',
-                        icon: <DeleteOutlined />,
-                        danger: true,
-                        onClick: () => {
-                          antdApp.modal.confirm({
-                            title: t('Xác nhận xoá'),
-                            content: t('Bạn có chắc chắn muốn xoá không?'),
-                            okText: t('Xác nhận'),
-                            cancelText: t('Huỷ'),
-                            onOk: async () => {},
-                          });
-                        },
-                      },
-                    ],
-                  }}
-                >
-                  <Button>
-                    <Space>
-                      {t('Hành động')}
-                      <DownOutlined />
-                    </Space>
-                  </Button>
-                </Dropdown>
-              ),
-            },
           ]}
           onChange={(pagination) => {
             setTableParams({
@@ -317,4 +217,4 @@ function QuestionSingle() {
   );
 }
 
-export default QuestionSingle;
+export default ModalSelectQuestionSingle;

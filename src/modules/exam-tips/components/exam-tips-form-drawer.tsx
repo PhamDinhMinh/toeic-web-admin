@@ -316,7 +316,7 @@ const ExamTipsFormDrawer: React.FC<TExamTipsFormDrawerProps> = ({
 
         <Form.Item label={t('Nội dung')}>
           <Form.List name="description">
-            {(fields, { add, remove }, { errors }) => (
+            {(fields, { add, remove }) => (
               <>
                 {fields.map((field, index) => (
                   <Space

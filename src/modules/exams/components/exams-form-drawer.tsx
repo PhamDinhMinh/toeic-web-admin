@@ -1,15 +1,13 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { App, Button, Drawer, Form, Input, Select, Space } from 'antd';
-import { useEffect, useMemo, useRef } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { App, Button, Drawer, Form, Input, Modal, Space } from 'antd';
+import { useEffect, useRef, useState } from 'react';
 import 'react-quill/dist/quill.snow.css';
 
 import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
-import { useAuthStore } from '@/modules/auth/auth.zustand';
-import { IQuestionSingleResponse } from '@/modules/questions-toeic/services/question-toeic.model';
-import questionToeicService from '@/modules/questions-toeic/services/question-toeic.service';
 
 import examService from '../services/exams.service';
+import ModalSelectQuestionSingle from './modal-select-question-single';
 
 type TExamFormDrawerProps = {
   open: boolean;
@@ -27,8 +25,20 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
   refetch,
 }: TExamFormDrawerProps) => {
   const { t } = useTranslation();
-  const user = useAuthStore((state) => state.user);
   const setLoading = useAppStore((state) => state.setLoading);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const { message } = App.useApp();
   const [form] = Form.useForm();
@@ -49,25 +59,25 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
     },
   });
 
-  const { data: getListSingleQuestion } = useQuery({
-    queryKey: ['/question-single-list'],
-    queryFn: () =>
-      questionToeicService.getListSingleQuestion({
-        maxResultCount: 100,
-        skipCount: 0,
-      }),
-  });
+  // const { data: getListSingleQuestion } = useQuery({
+  //   queryKey: ['/question-single-list'],
+  //   queryFn: () =>
+  //     questionToeicService.getListSingleQuestion({
+  //       maxResultCount: 100,
+  //       skipCount: 0,
+  //     }),
+  // });
 
-  const option = useMemo(() => {
-    return (
-      getListSingleQuestion?.data?.data?.map(
-        (item: IQuestionSingleResponse) => ({
-          value: item.id,
-          label: item.content,
-        }),
-      ) || []
-    );
-  }, [getListSingleQuestion]);
+  // const option = useMemo(() => {
+  //   return (
+  //     getListSingleQuestion?.data?.data?.map(
+  //       (item: IQuestionSingleResponse) => ({
+  //         value: item.id,
+  //         label: item.content,
+  //       }),
+  //     ) || []
+  //   );
+  // }, [getListSingleQuestion]);
 
   useEffect(() => {
     if (action === 'create') {
@@ -155,19 +165,9 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
             },
           ]}
         >
-          <Select
-            mode="multiple"
-            placeholder="Chọn các câu hỏi"
-            options={option}
-            // optionRender={(option) => (
-            //   <Space>
-            //     <span role="img" aria-label={option.data.label}>
-            //       {option.data.emoji}
-            //     </span>
-            //     {option.data.desc}
-            //   </Space>
-            // )}
-          />
+          <Button type="text" onClick={showModal}>
+            Thêm câu hỏi
+          </Button>
         </Form.Item>
 
         <Form.Item
@@ -185,21 +185,7 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
               },
             },
           ]}
-        >
-          <Select
-            mode="multiple"
-            placeholder="Chọn các câu hỏi"
-            options={option}
-            optionRender={(option) => (
-              <Space>
-                <span role="img" aria-label={option.data.label}>
-                  {option.data.emoji}
-                </span>
-                {option.data.desc}
-              </Space>
-            )}
-          />
-        </Form.Item>
+        ></Form.Item>
 
         <Form.Item
           name="listQuestionPart5"
@@ -216,21 +202,7 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
               },
             },
           ]}
-        >
-          <Select
-            mode="multiple"
-            placeholder="Chọn các câu hỏi"
-            options={option}
-            optionRender={(option) => (
-              <Space>
-                <span role="img" aria-label={option.data.label}>
-                  {option.data.emoji}
-                </span>
-                {option.data.desc}
-              </Space>
-            )}
-          />
-        </Form.Item>
+        ></Form.Item>
 
         <Form.Item shouldUpdate>
           {() => (
@@ -242,6 +214,17 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
           )}
         </Form.Item>
       </Form>
+
+      <Modal
+        title="Thêm câu hỏi"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        width={(screen.width * 4) / 5}
+        style={{ marginTop: -40 }}
+      >
+        <ModalSelectQuestionSingle />
+      </Modal>
     </Drawer>
   );
 };

@@ -4,15 +4,7 @@ import {
   RotateRightOutlined,
   SwapOutlined,
 } from '@ant-design/icons';
-import {
-  Button,
-  ButtonProps,
-  Divider,
-  Flex,
-  Modal,
-  UploadFile,
-  theme,
-} from 'antd';
+import { Button, ButtonProps, Divider, Flex, Modal, theme } from 'antd';
 import { useRef, useState } from 'react';
 import { Cropper, ReactCropperElement, ReactCropperProps } from 'react-cropper';
 
