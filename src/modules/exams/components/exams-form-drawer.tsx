@@ -1,13 +1,14 @@
 import { useMutation } from '@tanstack/react-query';
-import { App, Button, Drawer, Form, Input, Modal, Space } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import { App, Button, Drawer, Form, Input, Space } from 'antd';
+import { useEffect, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 
 import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
+import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
 
 import examService from '../services/exams.service';
-import ModalSelectQuestionSingle from './modal-select-question-single';
+import ButtonOpenModal from './button-open-modal';
 
 type TExamFormDrawerProps = {
   open: boolean;
@@ -26,19 +27,6 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
 }: TExamFormDrawerProps) => {
   const { t } = useTranslation();
   const setLoading = useAppStore((state) => state.setLoading);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
 
   const { message } = App.useApp();
   const [form] = Form.useForm();
@@ -58,8 +46,6 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
       message.error(error.message);
     },
   });
-
-  // const { data: getListSingleQuestion } = useQuery({
   //   queryKey: ['/question-single-list'],
   //   queryFn: () =>
   //     questionToeicService.getListSingleQuestion({
@@ -78,6 +64,44 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
   //     ) || []
   //   );
   // }, [getListSingleQuestion]);
+
+  const itemPart = [
+    {
+      partId: EExamTipsType.Part1,
+      name: 'listQuestionPart1',
+      quantityQuestion: 6,
+    },
+    {
+      partId: EExamTipsType.Part2,
+      name: 'listQuestionPart2',
+      quantityQuestion: 25,
+    },
+    {
+      partId: EExamTipsType.Part3,
+      name: 'listQuestionPart3',
+      quantityQuestion: 39,
+    },
+    {
+      partId: EExamTipsType.Part4,
+      name: 'listQuestionPart4',
+      quantityQuestion: 30,
+    },
+    {
+      partId: EExamTipsType.Part5,
+      name: 'listQuestionPart5',
+      quantityQuestion: 30,
+    },
+    {
+      partId: EExamTipsType.Part6,
+      name: 'listQuestionPart6',
+      quantityQuestion: 16,
+    },
+    {
+      partId: EExamTipsType.Part7,
+      name: 'listQuestionPart7',
+      quantityQuestion: 54,
+    },
+  ];
 
   useEffect(() => {
     if (action === 'create') {
@@ -132,11 +156,12 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
         wrapperCol={{ span: 20 }}
         onFinish={(values) => {
           setLoading(true);
-          action === 'create'
-            ? createMutation.mutate({
-                ...values,
-              })
-            : '';
+          console.log(values, 'jjj');
+          // action === 'create'
+          //   ? createMutation.mutate({
+          //       ...values,
+          //     })
+          //   : '';
         }}
       >
         <Form.Item
@@ -149,60 +174,45 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name="listQuestionPart1"
-          label={t('Câu hỏi part1')}
-          rules={[
-            {
-              required: true,
-              validator: async (_, listQuestionPart1) => {
-                if (!listQuestionPart1 || listQuestionPart1.length > 6) {
-                  return Promise.reject(
-                    new Error(t('Part 1 chỉ có 6 câu hỏi')),
-                  );
-                }
-              },
-            },
-          ]}
-        >
-          <Button type="text" onClick={showModal}>
-            Thêm câu hỏi
-          </Button>
-        </Form.Item>
-
-        <Form.Item
-          name="listQuestionPart2"
-          label={t('Câu hỏi part2')}
-          rules={[
-            {
-              required: true,
-              validator: async (_, listQuestionPart1) => {
-                if (!listQuestionPart1 || listQuestionPart1.length > 25) {
-                  return Promise.reject(
-                    new Error(t('Part 2 chỉ có 25 câu hỏi')),
-                  );
-                }
-              },
-            },
-          ]}
-        ></Form.Item>
-
-        <Form.Item
-          name="listQuestionPart5"
-          label={t('Câu hỏi part5')}
-          rules={[
-            {
-              required: true,
-              validator: async (_, listQuestionPart1) => {
-                if (!listQuestionPart1 || listQuestionPart1.length > 30) {
-                  return Promise.reject(
-                    new Error(t('Part 5 chỉ có 30 câu hỏi')),
-                  );
-                }
-              },
-            },
-          ]}
-        ></Form.Item>
+        {itemPart?.map((item) => (
+          <>
+            <Form.Item
+              name={item.name}
+              label={t('Câu hỏi part') + ' ' + item.partId}
+              rules={[
+                {
+                  required: true,
+                  validator: async (_, listPart) => {
+                    if (
+                      !listPart ||
+                      listPart.length !== item.quantityQuestion
+                    ) {
+                      return Promise.reject(
+                        new Error(
+                          t('Part') +
+                            ' ' +
+                            item.partId +
+                            ' ' +
+                            'phải có' +
+                            ' ' +
+                            item.quantityQuestion +
+                            ' ' +
+                            t('Câu hỏi').toLowerCase(),
+                        ),
+                      );
+                    }
+                  },
+                },
+              ]}
+            >
+              <ButtonOpenModal
+                partId={item.partId}
+                name={item.name}
+                form={form}
+              />
+            </Form.Item>
+          </>
+        ))}
 
         <Form.Item shouldUpdate>
           {() => (
@@ -214,17 +224,6 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
           )}
         </Form.Item>
       </Form>
-
-      <Modal
-        title="Thêm câu hỏi"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        width={(screen.width * 4) / 5}
-        style={{ marginTop: -40 }}
-      >
-        <ModalSelectQuestionSingle />
-      </Modal>
     </Drawer>
   );
 };

@@ -15,7 +15,6 @@ import {
   Table,
   TablePaginationConfig,
 } from 'antd';
-import { Popover, Typography } from 'antd/lib';
 import { useState } from 'react';
 import { useDebounce } from 'react-use';
 
@@ -23,7 +22,6 @@ import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
 import ExamTipsPreviewDrawer from '@/modules/exam-tips/components/exam-tips-preview-drawer';
-import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
 import examTipsService from '@/modules/exam-tips/exam-tips.service';
 import ExamFormDrawer from '@/modules/exams/components/exams-form-drawer';
 
@@ -168,47 +166,6 @@ function ExamTipsListPage() {
               dataIndex: 'title',
               key: 'title',
               width: 200,
-            },
-            {
-              title: t('Loại'),
-              dataIndex: 'type',
-              key: 'type',
-              width: 100,
-              render: (type: number) => <PartTypeTag type={type} />,
-            },
-            {
-              title: t('Nội dung'),
-              dataIndex: 'content',
-              key: 'content',
-              render: (content) => (
-                <div>
-                  <div
-                    style={{
-                      maxHeight: 120,
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                    dangerouslySetInnerHTML={{ __html: content }}
-                  />
-                  <Popover
-                    content={
-                      <div
-                        dangerouslySetInnerHTML={{ __html: content }}
-                        style={{
-                          maxHeight: '300px',
-                          overflow: 'auto',
-                          maxWidth: '500px',
-                        }}
-                      />
-                    }
-                    trigger="click"
-                  >
-                    <Typography style={{ cursor: 'pointer' }}>
-                      Xem thêm...
-                    </Typography>
-                  </Popover>
-                </div>
-              ),
             },
             {
               title: t('Hành động'),

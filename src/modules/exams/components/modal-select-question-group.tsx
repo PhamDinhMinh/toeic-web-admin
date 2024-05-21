@@ -16,7 +16,6 @@ import { useDebounce } from 'react-use';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
 import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
-import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
 import TypePartTypeTag from '@/modules/questions-toeic/components/type-part-type-tag';
 import questionToeicService from '@/modules/questions-toeic/services/question-toeic.service';
 
@@ -28,7 +27,7 @@ type TTableParams = {
   partId?: number;
 };
 
-function ModalSelectQuestionSingle({
+function ModalSelectQuestionGroup({
   partId,
   setSelectedRowKeys,
   selectedRowKeys,
@@ -66,18 +65,18 @@ function ModalSelectQuestionSingle({
   const hasSelected = selectedRowKeys && selectedRowKeys?.length > 0;
 
   const {
-    data: getListSingleQuestion,
+    data: getListGroupQuestion,
     isFetching,
     isLoading,
   } = useQuery({
     queryKey: [
-      '/question-single-list',
+      '/question-group-list',
       tableParams.pagination,
       tableParams.filters,
       partId,
     ],
     queryFn: () =>
-      questionToeicService.getListSingleQuestion({
+      questionToeicService.getListGroupQuestion({
         maxResultCount: tableParams.pagination?.pageSize || 20,
         skipCount:
           tableParams.pagination?.current && tableParams.pagination?.pageSize
@@ -128,19 +127,20 @@ function ModalSelectQuestionSingle({
 
         <Table
           loading={isLoading || isFetching}
-          dataSource={getListSingleQuestion?.data?.data || []}
-          rowSelection={rowSelection}
+          dataSource={getListGroupQuestion?.data?.data || []}
           pagination={{
             ...tableParams.pagination,
-            total: getListSingleQuestion?.data?.totalRecords ?? 0,
+            total: getListGroupQuestion?.data?.totalRecords ?? 0,
           }}
+          rowSelection={rowSelection}
           rowKey={(record) => record.id}
-          scroll={{ x: 2200 }}
           bordered
+          scroll={{ x: 2200 }}
           columns={[
             {
               title: t('STT'),
               key: 'index',
+              fixed: 'left',
               width: 70,
               render: (_, __, index) => {
                 const currentPage = tableParams.pagination.current || 1;
@@ -149,52 +149,17 @@ function ModalSelectQuestionSingle({
               },
             },
             {
-              title: t('Nội dung'),
-              dataIndex: 'content',
-              key: 'content',
-              hidden: partId === EExamTipsType.Part1,
-            },
-            {
-              title: t('Phần thi'),
-              dataIndex: 'partId',
-              key: 'partId',
-              width: 90,
-              render: (type: number) => <PartTypeTag type={type} />,
-            },
-            {
-              title: t('Loại'),
-              dataIndex: 'type',
-              key: 'type',
-              width: 250,
-              render: (type, item, index) => (
-                <TypePartTypeTag
-                  partId={item?.partId}
-                  type={type}
-                  key={index + uid}
-                />
-              ),
-            },
-            {
               title: t('Ảnh'),
               dataIndex: 'imageUrl',
-              key: 'imageUrl',
-              render: (images) => (
-                <>
-                  {images && images.length >= 1 && (
-                    <Image
-                      wrapperStyle={{ flexShrink: 0, border: '1px solid #eee' }}
-                      preview={{ src: images[0] }}
-                      src={images[0]}
-                      style={{ objectFit: 'contain', maxHeight: 250 }}
-                    />
-                  )}
-                </>
-              ),
-              width: 250,
-              align: 'center',
-              hidden:
-                partId === EExamTipsType.Part5 ||
-                partId === EExamTipsType.Part2,
+              width: 300,
+              key: 'title',
+              render: (imageUrl) =>
+                imageUrl.map((image: string) => (
+                  <>
+                    <Image width={250} src={image} />
+                  </>
+                )),
+              hidden: partId === 3 || partId === 4,
             },
             {
               title: t('File nghe'),
@@ -214,33 +179,78 @@ function ModalSelectQuestionSingle({
                   )}
                 </>
               ),
-              hidden: partId === EExamTipsType.Part5,
+              hidden: partId === 6 || partId === 7,
             },
             {
-              title: t('Đáp án'),
-              dataIndex: 'answers',
-              key: 'answers',
-              render: (answers) => (
-                <div>
-                  {answers.map((answer: any, index: number) => (
-                    <div
-                      key={index}
-                      style={{
-                        color: answer.isBoolean
-                          ? 'rgb(36, 208, 163)'
-                          : 'inherit',
-                      }}
-                    >
-                      {String.fromCharCode(65 + index)}: {answer.content}
-                    </div>
-                  ))}
-                </div>
-              ),
+              title: t('Phần thi'),
+              dataIndex: 'partId',
+              width: 100,
+              key: 'partId',
+              render: (partId: number) => <PartTypeTag type={partId} />,
             },
             {
-              title: t('Giải thích'),
-              dataIndex: 'transcription',
-              key: 'transcription',
+              title: t('Thuộc đề'),
+              dataIndex: 'idExam',
+              width: 100,
+              key: 'idExam',
+            },
+            {
+              title: t('Câu hỏi'),
+              dataIndex: 'questions',
+              key: 'questions',
+              render: (questions, rowData) => {
+                return (
+                  <div style={{}}>
+                    <Flex style={{ width: '100%' }}>
+                      <Space style={gridStyle}>{t('Dạng câu')}</Space>
+                      <Space style={{ ...gridStyle, minWidth: 100 }}>
+                        {t('Nội dung')}
+                      </Space>
+                      <Space style={gridStyle}>{t('Đáp án')}</Space>
+                      <Space style={gridStyle}>{t('Giải thích')}</Space>
+                    </Flex>
+                    {questions.map((item: any, index: number) => (
+                      <>
+                        <Flex style={{ width: '100%' }}>
+                          <Space style={gridStyle}>
+                            <TypePartTypeTag
+                              partId={rowData.partId}
+                              type={item.type}
+                              key={index + uid}
+                            />
+                          </Space>
+                          <Space
+                            style={{
+                              ...gridStyle,
+                              minWidth: 100,
+                            }}
+                          >
+                            {item.content ?? ''}
+                          </Space>
+                          <Flex style={gridStyle} vertical>
+                            {item?.answers.map((answer: any, index: number) => (
+                              <div
+                                key={index}
+                                style={{
+                                  color: answer.isBoolean
+                                    ? 'rgb(36, 208, 163)'
+                                    : 'inherit',
+                                }}
+                              >
+                                {String.fromCharCode(65 + index)}:{' '}
+                                {answer.content ?? ''}
+                              </div>
+                            ))}
+                          </Flex>
+                          <Space style={gridStyle}>
+                            {item.transcription ?? ''}
+                          </Space>
+                        </Flex>
+                      </>
+                    ))}
+                  </div>
+                );
+              },
             },
           ]}
           onChange={(pagination) => {
@@ -255,4 +265,10 @@ function ModalSelectQuestionSingle({
   );
 }
 
-export default ModalSelectQuestionSingle;
+export default ModalSelectQuestionGroup;
+
+const gridStyle: React.CSSProperties = {
+  width: '100%',
+  border: '1px solid #E0E0E0',
+  padding: '6px',
+};
