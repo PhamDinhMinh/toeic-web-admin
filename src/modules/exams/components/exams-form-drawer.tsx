@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { App, Button, Drawer, Form, Input, Space } from 'antd';
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 
 import useTranslation from '@/hooks/useTranslation';
@@ -26,6 +26,7 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
   refetch,
 }: TExamFormDrawerProps) => {
   const { t } = useTranslation();
+  const uid = useId();
   const setLoading = useAppStore((state) => state.setLoading);
 
   const { message } = App.useApp();
@@ -174,44 +175,40 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
           <Input />
         </Form.Item>
 
-        {itemPart?.map((item) => (
-          <>
-            <Form.Item
-              name={item.name}
-              label={t('Câu hỏi part') + ' ' + item.partId}
-              rules={[
-                {
-                  required: true,
-                  validator: async (_, listPart) => {
-                    if (
-                      !listPart ||
-                      listPart.length !== item.quantityQuestion
-                    ) {
-                      return Promise.reject(
-                        new Error(
-                          t('Part') +
-                            ' ' +
-                            item.partId +
-                            ' ' +
-                            'phải có' +
-                            ' ' +
-                            item.quantityQuestion +
-                            ' ' +
-                            t('Câu hỏi').toLowerCase(),
-                        ),
-                      );
-                    }
-                  },
+        {itemPart?.map((item, index) => (
+          <Form.Item
+            key={index + 'part' + uid}
+            name={item.name}
+            label={t('Câu hỏi part') + ' ' + item.partId}
+            rules={[
+              {
+                required: true,
+                validator: async (_, listPart) => {
+                  if (!listPart || listPart.length !== item.quantityQuestion) {
+                    return Promise.reject(
+                      new Error(
+                        t('Part') +
+                          ' ' +
+                          item.partId +
+                          ' ' +
+                          'phải có' +
+                          ' ' +
+                          item.quantityQuestion +
+                          ' ' +
+                          t('Câu hỏi').toLowerCase(),
+                      ),
+                    );
+                  }
                 },
-              ]}
-            >
-              <ButtonOpenModal
-                partId={item.partId}
-                name={item.name}
-                form={form}
-              />
-            </Form.Item>
-          </>
+              },
+            ]}
+          >
+            <ButtonOpenModal
+              partId={item.partId}
+              name={item.name}
+              form={form}
+            />
+          </Form.Item>
         ))}
 
         <Form.Item shouldUpdate>
