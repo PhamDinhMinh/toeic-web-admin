@@ -1,6 +1,8 @@
 import { Button, Flex, Modal, Typography } from 'antd';
 import React, { useState } from 'react';
 
+import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
+
 import ModalSelectQuestionGroup from './modal-select-question-group';
 import ModalSelectQuestionSingle from './modal-select-question-single';
 
@@ -42,12 +44,14 @@ function ButtonOpenModal({
         <Typography>
           Đã chọn{' '}
           <Typography.Text style={{ fontWeight: '600' }}>
-            {form.getFieldValue(name)?.length ?? 0}
+            {partId === EExamTipsType.Part3 || partId === EExamTipsType.Part4
+              ? (form.getFieldValue(name)?.length ?? 0) * 3
+              : form.getFieldValue(name)?.length ?? 0}
           </Typography.Text>{' '}
           câu
         </Typography>
         <Button type="dashed" onClick={showModal}>
-          Thêm câu hỏi
+          Chọn câu hỏi
         </Button>
       </Flex>
       <Modal

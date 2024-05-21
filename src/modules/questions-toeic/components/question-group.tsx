@@ -147,7 +147,7 @@ function QuestionGroup() {
           }}
           rowKey={(record) => record.id}
           bordered
-          scroll={{ x: 2200 }}
+          scroll={{ x: 2600 }}
           columns={[
             {
               title: t('STT'),
@@ -188,6 +188,20 @@ function QuestionGroup() {
                       preload="none"
                     />
                   )}
+                </>
+              ),
+            },
+            {
+              title: t('Nội dung'),
+              dataIndex: 'content',
+              key: 'content',
+              width: 350,
+              render: (content) => (
+                <>
+                  <div
+                    dangerouslySetInnerHTML={{ __html: content }}
+                    style={{ maxHeight: 320, overflow: 'scroll' }}
+                  />
                 </>
               ),
             },
@@ -237,7 +251,7 @@ function QuestionGroup() {
                           >
                             {item.content ?? ''}
                           </Space>
-                          <Flex style={gridStyle} vertical>
+                          <Flex style={gridStyle} vertical justify="center">
                             {item?.answers.map((answer: any, index: number) => (
                               <div
                                 key={index}
@@ -252,7 +266,15 @@ function QuestionGroup() {
                               </div>
                             ))}
                           </Flex>
-                          <Space style={gridStyle}>
+                          <Space
+                            style={{
+                              maxHeight: 150,
+                              overflow: 'scroll',
+                              width: '100%',
+                              border: '1px solid #E0E0E0',
+                              padding: '6px',
+                            }}
+                          >
                             {item.transcription ?? ''}
                           </Space>
                         </Flex>

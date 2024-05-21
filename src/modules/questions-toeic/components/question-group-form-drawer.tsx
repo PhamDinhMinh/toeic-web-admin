@@ -13,6 +13,7 @@ import {
 } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { useEffect, useId, useRef } from 'react';
+import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
 import useTranslation from '@/hooks/useTranslation';
@@ -21,6 +22,10 @@ import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
 import UploadFile from '@/modules/files/components/upload-file';
 import UploadImages from '@/modules/files/components/upload-list-image';
 import fileService from '@/modules/files/services/files.service';
+import {
+  formatsQuill,
+  modulesQuill,
+} from '@/shared/components/quill/quill.model';
 
 import {
   TypePart1,
@@ -200,6 +205,14 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
 
         <Form.Item name="imageUrl" label={t('Hình ảnh')}>
           <UploadImages />
+        </Form.Item>
+
+        <Form.Item name="content" label={t('Nội dung')}>
+          <ReactQuill
+            theme="snow"
+            modules={modulesQuill}
+            formats={formatsQuill}
+          />
         </Form.Item>
 
         <Form.Item name="transcription" label={t('Giải thích')}>

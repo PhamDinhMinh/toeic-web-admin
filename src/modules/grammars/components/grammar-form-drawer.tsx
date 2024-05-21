@@ -7,6 +7,10 @@ import 'react-quill/dist/quill.snow.css';
 import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
 import { useAuthStore } from '@/modules/auth/auth.zustand';
+import {
+  formatsQuill,
+  modulesQuill,
+} from '@/shared/components/quill/quill.model';
 
 import { EGrammarType, IGrammarResponse } from '../grammars.model';
 import grammarService from '../grammars.service';
@@ -29,146 +33,6 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
   const { t } = useTranslation();
   const user = useAuthStore((state) => state.user);
   const setLoading = useAppStore((state) => state.setLoading);
-
-  const Quill = ReactQuill.Quill;
-  const Font = Quill.import('formats/font');
-  Font.whitelist = ['Roboto', 'Raleway', 'Montserrat', 'Lato', 'Rubik'];
-  Quill.register(Font, true);
-
-  const modules = {
-    toolbar: [
-      [{ header: [1, 2, 3, 4, 5, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [
-        {
-          color: [
-            '#9edc7a',
-            '#86d45a',
-            '#6fcc3a',
-            '#60bb32',
-            '#4aa728',
-            '#33931e',
-            '#204918',
-            '#24d0b1',
-            '#24d0a3',
-            '#24d094',
-            '#24d086',
-            '#24d078',
-            '#24d069',
-            '#24d05b',
-            '#FFD699',
-            '#FFC166',
-            '#FFAD33',
-            '#FF9800',
-            '#CC7A00',
-            '#995B00',
-            '#663D00',
-            '#EEEEEE',
-            '#E0E0E0',
-            '#BDBDBD',
-            '#9E9E9E',
-            '#757575',
-            '#616161',
-            '#424242',
-            '#B4A9FF',
-            '#8E7FFF',
-            '#6954FF',
-            '#4329FF',
-            '#3621CC',
-            '#281999',
-            '#1B1066',
-            '#C199FF',
-            '#A366FF',
-            '#8433FF',
-            '#6500FF',
-            '#5100CC',
-            '#3D0099',
-            '#280066',
-            '#F5A89A',
-            '#EE7C6B',
-            '#E54646',
-            '#DF0029',
-            '#C50023',
-            '#FFFFFF',
-            '#000000',
-          ],
-        },
-        {
-          background: [
-            '#9edc7a',
-            '#86d45a',
-            '#6fcc3a',
-            '#60bb32',
-            '#4aa728',
-            '#33931e',
-            '#204918',
-            '#FFD699',
-            '#FFC166',
-            '#FFAD33',
-            '#FF9800',
-            '#CC7A00',
-            '#995B00',
-            '#663D00',
-            '#EEEEEE',
-            '#E0E0E0',
-            '#BDBDBD',
-            '#9E9E9E',
-            '#757575',
-            '#616161',
-            '#424242',
-            '#B4A9FF',
-            '#8E7FFF',
-            '#6954FF',
-            '#4329FF',
-            '#3621CC',
-            '#281999',
-            '#1B1066',
-            '#C199FF',
-            '#A366FF',
-            '#8433FF',
-            '#6500FF',
-            '#5100CC',
-            '#3D0099',
-            '#280066',
-            '#F5A89A',
-            '#EE7C6B',
-            '#E54646',
-            '#DF0029',
-            '#C50023',
-            '#FFFFFF',
-            '#000000',
-          ],
-        },
-      ],
-      [{ align: [] }],
-      [
-        { list: 'ordered' },
-        { list: 'bullet' },
-        { indent: '-1' },
-        { indent: '+1' },
-      ],
-      ['image'],
-      [{ script: 'sub' }, { script: 'super' }],
-    ],
-  };
-
-  const formats = [
-    'header',
-    'font',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'color',
-    'background',
-    'code',
-    'script',
-    'list',
-    'bullet',
-    'indent',
-    'image',
-  ];
 
   const { message } = App.useApp();
   const [form] = Form.useForm();
@@ -295,7 +159,11 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
             { required: true, message: t('Trường này không được bỏ trống!') },
           ]}
         >
-          <ReactQuill theme="snow" modules={modules} formats={formats} />
+          <ReactQuill
+            theme="snow"
+            modules={modulesQuill}
+            formats={formatsQuill}
+          />
         </Form.Item>
         <Form.Item shouldUpdate>
           {() => (
