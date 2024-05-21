@@ -61,6 +61,7 @@ function ModalSelectQuestionSingle({
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
+    preserveSelectedRowKeys: true,
   };
 
   const hasSelected = selectedRowKeys && selectedRowKeys?.length > 0;
