@@ -1,4 +1,4 @@
-import { TUser } from '../users/user.model';
+import { TUser } from '../users/services/user.model';
 
 export type TLoginInput = {
   userNameOrEmail: string;

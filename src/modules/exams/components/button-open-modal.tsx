@@ -1,7 +1,5 @@
 import { Button, Flex, Modal, Typography } from 'antd';
-import React, { useState } from 'react';
-
-import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
+import React, { useMemo, useState } from 'react';
 
 import ModalSelectQuestionGroup from './modal-select-question-group';
 import ModalSelectQuestionSingle from './modal-select-question-single';
@@ -25,6 +23,7 @@ function ButtonOpenModal({
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>(
     value ?? [],
   );
+  const [rowData, setRowData] = useState<any>([]);
 
   const showModal = () => {
     setIsOpen(true);
@@ -38,15 +37,24 @@ function ButtonOpenModal({
   const handleCancel = () => {
     setIsOpen(false);
   };
+
+  const quantity = useMemo(() => {
+    let count = 0;
+    rowData?.map((item: any) => {
+      count += item?.question?.length;
+    });
+    return count;
+  }, [rowData]);
   return (
     <>
       <Flex justify="space-between" align="center">
         <Typography>
           Đã chọn{' '}
           <Typography.Text style={{ fontWeight: '600' }}>
-            {partId === EExamTipsType.Part3 || partId === EExamTipsType.Part4
+            {/* {partId === EExamTipsType.Part3 || partId === EExamTipsType.Part4
               ? (form.getFieldValue(name)?.length ?? 0) * 3
-              : form.getFieldValue(name)?.length ?? 0}
+              : form.getFieldValue(name)?.length ?? 0} */}
+            {quantity}
           </Typography.Text>{' '}
           câu
         </Typography>
@@ -73,6 +81,7 @@ function ButtonOpenModal({
             partId={partId}
             selectedRowKeys={selectedRowKeys}
             setSelectedRowKeys={setSelectedRowKeys}
+            setRowData={setRowData}
           />
         )}
       </Modal>

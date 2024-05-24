@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
+import { Route as AppUserSettingIndexImport } from './routes/_app/user-setting/index'
 import { Route as AppQuestionToeicIndexImport } from './routes/_app/question-toeic/index'
 import { Route as AppGrammarsIndexImport } from './routes/_app/grammars/index'
 import { Route as AppExamsIndexImport } from './routes/_app/exams/index'
@@ -36,6 +37,11 @@ const AppRoute = AppImport.update({
 const IndexRoute = IndexImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const AppUserSettingIndexRoute = AppUserSettingIndexImport.update({
+  path: '/user-setting/',
+  getParentRoute: () => AppRoute,
 } as any)
 
 const AppQuestionToeicIndexRoute = AppQuestionToeicIndexImport.update({
@@ -108,6 +114,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppQuestionToeicIndexImport
       parentRoute: typeof AppImport
     }
+    '/_app/user-setting/': {
+      preLoaderRoute: typeof AppUserSettingIndexImport
+      parentRoute: typeof AppImport
+    }
   }
 }
 
@@ -120,6 +130,7 @@ export const routeTree = rootRoute.addChildren([
     AppExamsIndexRoute,
     AppGrammarsIndexRoute,
     AppQuestionToeicIndexRoute,
+    AppUserSettingIndexRoute,
   ]),
   AuthRoute.addChildren([AuthAuthLoginRoute, AuthAuthRegisterRoute]),
 ])

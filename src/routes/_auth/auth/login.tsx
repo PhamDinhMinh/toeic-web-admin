@@ -110,6 +110,7 @@ function LoginPage() {
               <Input
                 placeholder={t('Tên đăng nhập hoặc email')}
                 prefix={<UserOutlined />}
+                // variant="filled"
               />
             </Form.Item>
 
@@ -128,6 +129,16 @@ function LoginPage() {
               />
             </Form.Item>
 
+            <Typography
+              style={{
+                textAlign: 'end',
+                cursor: 'pointer',
+                marginBottom: 20,
+                color: '#fff',
+              }}
+            >
+              {t('Quên mật khẩu?')}
+            </Typography>
             <Form.Item>
               <Button
                 style={{ width: '100%', backgroundColor: color.green_500 }}
@@ -137,16 +148,6 @@ function LoginPage() {
                 {t('Đăng nhập')}
               </Button>
             </Form.Item>
-            <Typography
-              style={{
-                textAlign: 'end',
-              }}
-            >
-              {t('Bạn chưa có tài khoản')}{' '}
-              <Link to="/auth/register" className="[&.active]:font-bold">
-                {t('Đăng ký ngay')}
-              </Link>
-            </Typography>
           </Form>
         </div>
       </Layout.Content>

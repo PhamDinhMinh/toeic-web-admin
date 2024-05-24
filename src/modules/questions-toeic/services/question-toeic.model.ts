@@ -264,6 +264,9 @@ export enum ETypePart7 {
   Text_Message_Chain_Form = 11,
   Synonym_Search_Question = 12,
   Implication_Question = 13,
+  Schedule_Time = 14,
+  Detail_mistake = 15,
+  Announcement_notice = 16,
 }
 
 export const TypePart7 = [
@@ -318,6 +321,18 @@ export const TypePart7 = [
   {
     label: 'Câu hỏi về hàm ý câu nói',
     value: ETypePart7.Implication_Question,
+  },
+  {
+    label: 'Dạng bài: Schedule - Lịch trình, thời gian biểu',
+    value: ETypePart7.Schedule_Time,
+  },
+  {
+    label: 'Câu hỏi chi tiết sai',
+    value: ETypePart7.Detail_mistake,
+  },
+  {
+    label: 'Announcement/ Notice: Thông báo',
+    value: ETypePart7.Announcement_notice,
   },
 ];
 

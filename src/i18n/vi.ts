@@ -90,6 +90,8 @@ export const initial = {
   'Part 5 có 30 câu hỏi': '',
   'Part 6 có 16 câu hỏi': '',
   'Part 7 có 54 câu hỏi': '',
+  'Quên mật khẩu?': '',
+  'Thông tin': '',
 };
 
 export type TObj = typeof initial;

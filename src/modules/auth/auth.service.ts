@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '@/configs/constants';
 import httpService from '@/shared/http-service';
 
-import { TUser } from '../users/user.model';
+import { TUser } from '../users/services/user.model';
 import { TLoginInput, TLoginResponse, TRegisterInput } from './auth.model';
 
 class AuthService {

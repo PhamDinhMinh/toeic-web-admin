@@ -31,10 +31,12 @@ function ModalSelectQuestionGroup({
   partId,
   setSelectedRowKeys,
   selectedRowKeys,
+  setRowData,
 }: {
   partId: number;
   setSelectedRowKeys: any;
   selectedRowKeys: React.Key[];
+  setRowData?: any;
 }) {
   const uid = useId();
   const { t } = useTranslation();
@@ -53,7 +55,8 @@ function ModalSelectQuestionGroup({
 
   const [search, setSearch] = useState<string>('');
 
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+  const onSelectChange = (newSelectedRowKeys: React.Key[], rowData: any) => {
+    setRowData(rowData);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 

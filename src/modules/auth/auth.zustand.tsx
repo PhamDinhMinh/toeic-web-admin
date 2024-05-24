@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { TUser } from '../users/user.model';
+import { TUser } from '../users/services/user.model';
 
 type TAuthState = {
   user: TUser | null;

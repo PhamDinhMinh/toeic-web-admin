@@ -117,6 +117,7 @@ const GrammarFormDrawer: React.FC<TGrammarFormDrawerProps> = ({
         autoComplete="off"
         labelCol={{ span: 4 }}
         wrapperCol={{ span: 20 }}
+        style={{ position: 'relative' }}
         onFinish={(values) => {
           setLoading(true);
           action === 'create'

@@ -11,3 +11,14 @@ export type TUser = {
   imageUrl?: string;
   coverAvatarUrl?: string;
 };
+
+export enum EUserGender {
+  MALE = 'Nam',
+  FEMALE = 'Nữ',
+  OTHER = 'Khác',
+}
+
+export enum EUserRole {
+  ADMIN = 'Admin',
+  USER = 'User',
+}
