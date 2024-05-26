@@ -255,37 +255,16 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
                     vertical
                     style={{ width: '100%' }}
                   >
-                    <Flex
-                      justify="space-between"
-                      align="center"
+                    <Form.Item
+                      {...restField}
                       style={{
-                        height: '32px',
+                        marginBottom: 0,
                       }}
+                      name={[name, 'content']}
+                      labelCol={{ span: 0 }}
                     >
-                      <Form.Item
-                        {...restField}
-                        style={{
-                          width: '48%',
-                          marginRight: '4%',
-                          marginBottom: 0,
-                        }}
-                        name={[name, 'content']}
-                        labelCol={{ span: 0 }}
-                      >
-                        <Input placeholder={t('Đáp án') + ' ' + (index + 1)} />
-                      </Form.Item>
-                      <Form.Item
-                        name={[name, 'transcription']}
-                        {...restField}
-                        style={{
-                          width: '48%',
-                          marginBottom: 0,
-                        }}
-                        labelCol={{ span: 0 }}
-                      >
-                        <Input placeholder={t('Nghĩa đáp án')} />
-                      </Form.Item>
-                    </Flex>
+                      <Input placeholder={t('Đáp án') + ' ' + (index + 1)} />
+                    </Form.Item>
                     <Flex
                       justify="space-between"
                       align="center"

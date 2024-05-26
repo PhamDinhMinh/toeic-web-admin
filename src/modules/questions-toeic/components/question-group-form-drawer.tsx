@@ -240,9 +240,9 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
           >
             {(fields, { add, remove }, { errors }) => (
               <>
-                {fields.map(({ key, name, ...restField }, index) => (
+                {fields.map(({ key, name, ...restField }, indexQ) => (
                   <Flex
-                    key={key + uid + index}
+                    key={key + uid + indexQ}
                     vertical
                     style={{
                       width: '100%',
@@ -328,13 +328,12 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                               {fields.map(
                                 ({ key, name, ...restField }, index) => (
                                   <Flex
-                                    key={key}
+                                    key={uid + 'Answers' + key}
                                     vertical
                                     style={{ width: '100%' }}
                                   >
                                     <Form.Item
                                       {...restField}
-                                      key={index}
                                       name={[name, 'content']}
                                       style={{ margin: 0 }}
                                     >
@@ -360,9 +359,11 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                                         initialValue={false}
                                         getValueFromEvent={(e) => {
                                           fields.forEach((f) => {
+                                            console.log(f);
                                             form.setFieldValue(
                                               [
                                                 'questions',
+                                                indexQ,
                                                 'answers',
                                                 f.name,
                                                 'isBoolean',
@@ -370,6 +371,9 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                                               false,
                                             );
                                           });
+                                          console.log(fields, 'hic');
+
+                                          console.log(e, 'heheh');
                                           return e.target.checked;
                                         }}
                                         {...restField}
