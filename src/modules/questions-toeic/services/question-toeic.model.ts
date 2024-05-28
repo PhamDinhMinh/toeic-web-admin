@@ -340,7 +340,7 @@ export interface IQuestionSingleResponse {
   id: number;
   content: string;
   partId: number;
-  imageUrl: null | string;
+  imageUrl: null | string[];
   audioUrl: null | string;
   transcription: string;
   numberSTT: number;

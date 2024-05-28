@@ -165,12 +165,16 @@ function QuestionGroup() {
               dataIndex: 'imageUrl',
               width: 300,
               key: 'title',
-              render: (imageUrl) =>
-                imageUrl.map((image: string) => (
-                  <>
-                    <Image width={250} src={image} />
-                  </>
-                )),
+              render: (imageUrl) => (
+                <>
+                  {imageUrl?.length === 0 && 'Không có ảnh'}
+                  {imageUrl.map((image: string) => (
+                    <>
+                      <Image width={250} src={image} />
+                    </>
+                  ))}
+                </>
+              ),
             },
             {
               title: t('File nghe'),
@@ -179,7 +183,7 @@ function QuestionGroup() {
               width: 350,
               render: (audioUrl) => (
                 <>
-                  {audioUrl && (
+                  {audioUrl ? (
                     <AudioPlayer
                       style={{ borderRadius: '1rem' }}
                       src={audioUrl}
@@ -187,6 +191,8 @@ function QuestionGroup() {
                       showJumpControls={false}
                       preload="none"
                     />
+                  ) : (
+                    'Không có audio'
                   )}
                 </>
               ),
@@ -198,10 +204,15 @@ function QuestionGroup() {
               width: 350,
               render: (content) => (
                 <>
-                  <div
-                    dangerouslySetInnerHTML={{ __html: content }}
-                    style={{ maxHeight: 320, overflow: 'scroll' }}
-                  />
+                  {' '}
+                  {content ? (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: content }}
+                      style={{ maxHeight: 320, overflow: 'scroll' }}
+                    />
+                  ) : (
+                    'Không có nội dung câu hỏi'
+                  )}
                 </>
               ),
             },

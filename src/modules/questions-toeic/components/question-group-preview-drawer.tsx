@@ -1,5 +1,6 @@
 import { Button, Descriptions, Drawer, Empty, Image } from 'antd';
 import { useId } from 'react';
+import AudioPlayer from 'react-h5-audio-player';
 
 import useTranslation from '@/hooks/useTranslation';
 import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
@@ -41,18 +42,33 @@ const QuestionGroupPreviewDrawer: React.FC<TQuestionGroupPreviewProps> = ({
               label: t('Ảnh'),
               children: (
                 <>
-                  {dataRow.imageUrl &&
-                    dataRow.imageUrl.map((image: string) => (
+                  {dataRow?.imageUrl &&
+                    dataRow?.imageUrl.map((image: string) => (
                       <>
                         <Image width={250} src={image} />
                       </>
-                    ))}
+                    ))}{' '}
+                  {dataRow?.imageUrl?.length === 0 && 'Không có ảnh'}
                 </>
               ),
             },
             {
               label: t('File nghe'),
-              children: dataRow.audioUrl,
+              children: (
+                <>
+                  {dataRow?.audioUrl ? (
+                    <AudioPlayer
+                      style={{ borderRadius: '1rem' }}
+                      src={dataRow?.audioUrl}
+                      showSkipControls={false}
+                      showJumpControls={false}
+                      preload="none"
+                    />
+                  ) : (
+                    'Không có audio'
+                  )}
+                </>
+              ),
             },
             {
               label: t('Phần thi'),
@@ -66,7 +82,7 @@ const QuestionGroupPreviewDrawer: React.FC<TQuestionGroupPreviewProps> = ({
                     <>
                       <Descriptions
                         column={1}
-                        title={`Câu hỏi số ${index}`}
+                        title={`Câu hỏi số ${index + 1}`}
                         labelStyle={{ minWidth: 80 }}
                         items={[
                           {

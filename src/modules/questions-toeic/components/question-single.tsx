@@ -9,14 +9,13 @@ import {
   Button,
   Dropdown,
   Flex,
-  Image,
   Input,
   Space,
   Table,
   TablePaginationConfig,
+  Typography,
 } from 'antd';
 import { useCallback, useId, useState } from 'react';
-import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 import { useDebounce } from 'react-use';
 
@@ -148,7 +147,7 @@ function QuestionSingle() {
             total: getListSingleQuestion?.data?.totalRecords ?? 0,
           }}
           rowKey={(record) => record.id}
-          scroll={{ x: 2200 }}
+          scroll={{ x: 2000 }}
           bordered
           columns={[
             {
@@ -165,6 +164,11 @@ function QuestionSingle() {
               title: t('Nội dung'),
               dataIndex: 'content',
               key: 'content',
+              render: (content) => (
+                <Typography.Text>
+                  {content ?? 'Không có nội dung'}
+                </Typography.Text>
+              ),
             },
             {
               title: t('Phần thi'),
@@ -187,47 +191,10 @@ function QuestionSingle() {
               ),
             },
             {
-              title: t('Ảnh'),
-              dataIndex: 'imageUrl',
-              key: 'imageUrl',
-              render: (images) => (
-                <>
-                  {images && images.length >= 1 && (
-                    <Image
-                      wrapperStyle={{ flexShrink: 0, border: '1px solid #eee' }}
-                      preview={{ src: images[0] }}
-                      src={images[0]}
-                      style={{ objectFit: 'contain', maxHeight: 250 }}
-                    />
-                  )}
-                </>
-              ),
-              width: 250,
-              align: 'center',
-            },
-            {
-              title: t('File nghe'),
-              dataIndex: 'audioUrl',
-              key: 'audioUrl',
-              width: 350,
-              render: (audioUrl) => (
-                <>
-                  {audioUrl && (
-                    <AudioPlayer
-                      style={{ borderRadius: '1rem' }}
-                      src={audioUrl}
-                      showSkipControls={false}
-                      showJumpControls={false}
-                      preload="none"
-                    />
-                  )}
-                </>
-              ),
-            },
-            {
               title: t('Đáp án'),
               dataIndex: 'answers',
               key: 'answers',
+              width: 300,
               render: (answers) => (
                 <div>
                   {answers.map((answer: any, index: number) => (

@@ -1,5 +1,6 @@
-import { Button, Descriptions, Drawer, Empty } from 'antd';
+import { Button, Descriptions, Drawer, Empty, Image } from 'antd';
 import { useId } from 'react';
+import AudioPlayer from 'react-h5-audio-player';
 
 import useTranslation from '@/hooks/useTranslation';
 import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
@@ -39,7 +40,7 @@ const QuestionSinglePreviewDrawer: React.FC<TQuestionSinglePreviewProps> = ({
           items={[
             {
               label: t('Nội dung'),
-              children: dataRow.content,
+              children: dataRow.content ?? 'Không có',
             },
             {
               label: t('Phần thi'),
@@ -49,6 +50,38 @@ const QuestionSinglePreviewDrawer: React.FC<TQuestionSinglePreviewProps> = ({
               label: t('Loại'),
               children: (
                 <TypePartTypeTag partId={dataRow?.partId} type={dataRow.type} />
+              ),
+            },
+            {
+              label: t('Ảnh'),
+              children: (
+                <>
+                  {dataRow?.imageUrl?.map((image, index) => (
+                    <Image
+                      key={index + 'Image' + uid}
+                      wrapperStyle={{ flexShrink: 0, border: '1px solid #eee' }}
+                      preview={{ src: image }}
+                      src={image}
+                      style={{ objectFit: 'contain', maxHeight: 250 }}
+                    />
+                  ))}
+                </>
+              ),
+            },
+            {
+              label: t('File nghe'),
+              children: (
+                <>
+                  {dataRow?.audioUrl && (
+                    <AudioPlayer
+                      style={{ borderRadius: '1rem' }}
+                      src={dataRow?.audioUrl}
+                      showSkipControls={false}
+                      showJumpControls={false}
+                      preload="none"
+                    />
+                  )}
+                </>
               ),
             },
             {
