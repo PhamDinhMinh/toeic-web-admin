@@ -92,6 +92,12 @@ export const initial = {
   'Part 7 có 54 câu hỏi': '',
   'Quên mật khẩu?': '',
   'Thông tin': '',
+  'Nhập excel': '',
+  'Nhập dữ liệu': '',
+  'Tải về template excel tại đây': '',
+  'Tải về': '',
+  'Nhập excel thành công': '',
+  'Đã có lỗi xảy ra': '',
 };
 
 export type TObj = typeof initial;

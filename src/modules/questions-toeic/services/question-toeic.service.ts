@@ -51,6 +51,29 @@ class QuestionToeicService {
       },
     });
   }
+
+  public async importExcel(
+    file: File,
+    data: {
+      [key: string]: any;
+    } = {},
+  ) {
+    const formData = new FormData();
+    formData.append('File', file);
+
+    Object.keys(data).forEach((key) => {
+      formData.append(key, data[key]);
+    });
+
+    const res = await httpService.request<any>({
+      method: 'POST',
+      url: '/api/services/app/Question/ImportExcelQuestionSingle',
+      data: formData,
+      contentType: 'multipart/form-data',
+    });
+
+    return res.result;
+  }
 }
 
 const questionToeicService = new QuestionToeicService();

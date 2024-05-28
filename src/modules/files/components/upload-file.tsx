@@ -2,7 +2,7 @@ import { UploadOutlined } from '@ant-design/icons';
 import { Button, Upload } from 'antd';
 import type { UploadFile, UploadProps } from 'antd';
 
-const UploadFile = ({ value, onChange }: any) => {
+const UploadFile = ({ value, onChange, accept }: any) => {
   const props: UploadProps = {
     onRemove: () => {},
     beforeUpload: () => {
@@ -24,7 +24,7 @@ const UploadFile = ({ value, onChange }: any) => {
         }}
         fileList={value ? [value] : []}
         onChange={({ file }) => onChange?.(file)}
-        accept=".mp3, .mp4"
+        accept={accept}
       >
         <Button icon={<UploadOutlined />}>Chọn file</Button>
       </Upload>

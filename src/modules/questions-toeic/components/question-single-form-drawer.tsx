@@ -322,7 +322,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
         </Form.Item>
 
         <Form.Item name="audioUrl" label={t('File nghe')}>
-          <UploadFile multiple={false} />
+          <UploadFile multiple={false} accept=".mp3, .mp4" />
         </Form.Item>
 
         <Form.Item name="imageUrl" label={t('Hình ảnh')}>
