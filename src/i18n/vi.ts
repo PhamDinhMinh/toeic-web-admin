@@ -98,6 +98,18 @@ export const initial = {
   'Tải về': '',
   'Nhập excel thành công': '',
   'Đã có lỗi xảy ra': '',
+  ID: '',
+  'Người dùng': '',
+  'Giới tính': '',
+  'Ngày sinh': '',
+  Quyền: '',
+  'Thời gian tạo': '',
+  'Họ và tên': '',
+  Email: '',
+  'Thông tin cá nhân': '',
+  Nam: '',
+  Nữ: '',
+  Khác: '',
 };
 
 export type TObj = typeof initial;

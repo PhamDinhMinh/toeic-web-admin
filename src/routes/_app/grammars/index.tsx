@@ -34,7 +34,6 @@ export const Route = createFileRoute('/_app/grammars/')({
 type TTableParams = {
   pagination: TablePaginationConfig;
   sortField?: string;
-  sortOrder?: string;
   filters?: Record<string, any>;
 };
 

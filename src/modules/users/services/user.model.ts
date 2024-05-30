@@ -12,6 +12,14 @@ export type TUser = {
   coverAvatarUrl?: string;
 };
 
+export type TUpdateUserDto = {
+  gender?: string;
+  emailAddress?: string;
+  name?: string;
+  phoneNumber?: string;
+  dateOfBirth?: any;
+};
+
 export enum EUserGender {
   MALE = 'Nam',
   FEMALE = 'Nữ',
