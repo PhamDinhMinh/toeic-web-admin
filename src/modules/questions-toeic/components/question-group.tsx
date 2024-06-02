@@ -147,7 +147,7 @@ function QuestionGroup() {
           }}
           rowKey={(record) => record.id}
           bordered
-          scroll={{ x: 2600 }}
+          scroll={{ x: 2650 }}
           columns={[
             {
               title: t('STT'),

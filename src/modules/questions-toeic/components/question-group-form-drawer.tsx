@@ -149,6 +149,7 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
               form.submit();
               hiddenSubmitRef.current.click();
             }}
+            disabled={createMutation.isPending}
           >
             {t('Xác nhận')}
           </Button>
@@ -371,9 +372,6 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                                               false,
                                             );
                                           });
-                                          console.log(fields, 'hic');
-
-                                          console.log(e, 'heheh');
                                           return e.target.checked;
                                         }}
                                         {...restField}
