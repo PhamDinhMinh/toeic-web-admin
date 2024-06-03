@@ -235,7 +235,7 @@ export const TypePart6 = [
   {
     label:
       'Hình thức: Thông báo/ văn bản hướng dẫn (Notice/ Announcement Information)',
-    vue: ETypePart6.Notice_Announcement,
+    value: ETypePart6.Notice_Announcement,
   },
   { label: 'Danh từ', value: ETypePart6.Noun },
   { label: 'Đại từ', value: ETypePart6.Pronoun },
