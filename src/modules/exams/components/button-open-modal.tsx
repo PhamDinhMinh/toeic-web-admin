@@ -12,13 +12,7 @@ type TButtonOpenModal = {
   form: any;
 };
 
-function ButtonOpenModal({
-  value,
-  onChange,
-  partId,
-  name,
-  form,
-}: TButtonOpenModal) {
+function ButtonOpenModal({ value, onChange, partId }: TButtonOpenModal) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>(
     value ?? [],

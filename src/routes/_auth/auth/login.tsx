@@ -1,6 +1,6 @@
 import { UserOutlined } from '@ant-design/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link, createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { App, Button, Form, Input, Layout, Typography } from 'antd';
 import { AxiosError } from 'axios';
 import { LockKeyhole } from 'lucide-react';
