@@ -278,18 +278,27 @@ function QuestionGroup() {
                               key={index + uid}
                             />
                           </Space>
-                          <Space
+                          <Flex
                             style={{
                               ...gridStyle,
                               minWidth: 100,
-                              maxHeight: 180,
+                              maxHeight: 200,
                               overflow: 'scroll',
                               border: '1px solid #E0E0E0',
                             }}
                           >
                             {item.content ?? ''}
-                          </Space>
-                          <Flex style={gridStyle} vertical justify="center">
+                          </Flex>
+                          <Flex
+                            style={{
+                              ...gridStyle,
+                              minWidth: 100,
+                              maxHeight: 200,
+                              padding: '6px',
+                            }}
+                            vertical
+                            justify="center"
+                          >
                             {item?.answers.map((answer: any, index: number) => (
                               <div
                                 key={index}
@@ -304,17 +313,18 @@ function QuestionGroup() {
                               </div>
                             ))}
                           </Flex>
-                          <Space
+                          <Flex
                             style={{
-                              maxHeight: 180,
-                              overflow: 'scroll',
+                              maxHeight: 200,
+                              overflowY: 'scroll',
                               width: '100%',
+                              height: '100%',
                               border: '1px solid #E0E0E0',
                               padding: '6px',
                             }}
                           >
                             {item.transcription ?? ''}
-                          </Space>
+                          </Flex>
                         </Flex>
                       </>
                     ))}
