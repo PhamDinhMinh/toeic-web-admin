@@ -230,7 +230,7 @@ function QuestionGroup() {
                   {content ? (
                     <div
                       dangerouslySetInnerHTML={{ __html: content }}
-                      style={{ maxHeight: 320, overflow: 'scroll' }}
+                      style={{ maxHeight: 450, overflow: 'scroll' }}
                     />
                   ) : (
                     'Không có nội dung câu hỏi'
@@ -284,6 +284,7 @@ function QuestionGroup() {
                               minWidth: 100,
                               maxHeight: 200,
                               overflow: 'scroll',
+                              alignItems: 'center',
                               border: '1px solid #E0E0E0',
                             }}
                           >

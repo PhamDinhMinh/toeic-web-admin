@@ -400,10 +400,10 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                   </Flex>
                 ))}
 
-                {fields.length < 4 && (
+                {fields.length < 5 && (
                   <Button
                     onClick={() => add()}
-                    disabled={fields.length >= 4}
+                    disabled={fields.length > 5}
                     icon={<PlusOutlined />}
                     type="primary"
                   >
