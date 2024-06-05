@@ -237,7 +237,9 @@ function QuestionGroup() {
                 return (
                   <div style={{}}>
                     <Flex style={{ width: '100%' }}>
-                      <Space style={gridStyle}>{t('Dạng câu')}</Space>
+                      <Space style={{ ...gridStyle, maxWidth: 300 }}>
+                        {t('Dạng câu')}
+                      </Space>
                       <Space style={{ ...gridStyle, minWidth: 100 }}>
                         {t('Nội dung')}
                       </Space>
@@ -247,7 +249,7 @@ function QuestionGroup() {
                     {questions.map((item: any, index: number) => (
                       <>
                         <Flex style={{ width: '100%' }}>
-                          <Space style={gridStyle}>
+                          <Space style={{ ...gridStyle, overflow: 'scroll' }}>
                             <TypePartTypeTag
                               partId={rowData.partId}
                               type={item.type}
