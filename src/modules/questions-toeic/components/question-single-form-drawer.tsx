@@ -22,18 +22,10 @@ import UploadFile from '@/modules/files/components/upload-file';
 import UploadImages from '@/modules/files/components/upload-list-image';
 import fileService from '@/modules/files/services/files.service';
 
-import {
-  TypePart1,
-  TypePart2,
-  TypePart3,
-  TypePart4,
-  TypePart5,
-  TypePart6,
-  TypePart7,
-} from '../services/question-toeic.model';
 import questionToeicService from '../services/question-toeic.service';
+import useType from './use-select-type';
 
-type OptionType = {
+export type OptionType = {
   label: string;
   value: number;
 };
@@ -55,6 +47,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
 }: TQuestionFormDrawer) => {
   const uid = useId();
   const { t } = useTranslation();
+  const { selectType } = useType();
   const setLoading = useAppStore((state) => state.setLoading);
 
   const [form] = Form.useForm();
@@ -101,27 +94,6 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
       message.error(error.message);
     },
   });
-
-  const selectType = () => {
-    switch (partId) {
-      case EExamTipsType.Part1:
-        return TypePart1;
-      case EExamTipsType.Part2:
-        return TypePart2;
-      case EExamTipsType.Part3:
-        return TypePart3;
-      case EExamTipsType.Part4:
-        return TypePart4;
-      case EExamTipsType.Part5:
-        return TypePart5;
-      case EExamTipsType.Part6:
-        return TypePart6;
-      case EExamTipsType.Part7:
-        return TypePart7;
-      default:
-        return TypePart1;
-    }
-  };
 
   return (
     <Drawer
@@ -221,7 +193,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
           ]}
         >
           <Select
-            options={(selectType() ?? []) as OptionType[]}
+            options={(selectType(partId) ?? []) as OptionType[]}
             mode="multiple"
           />
         </Form.Item>

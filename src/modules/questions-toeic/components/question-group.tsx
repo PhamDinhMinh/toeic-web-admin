@@ -3,6 +3,7 @@ import {
   DownOutlined,
   EditOutlined,
   EyeOutlined,
+  FilterOutlined,
 } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -11,6 +12,7 @@ import {
   Flex,
   Image,
   Input,
+  Popover,
   Space,
   Table,
   TablePaginationConfig,
@@ -26,6 +28,7 @@ import useTranslation from '@/hooks/useTranslation';
 import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
 
 import questionToeicService from '../services/question-toeic.service';
+import QuestionFilterForm from './question-filter-form';
 import QuestionGroupFormDrawer from './question-group-form-drawer';
 import QuestionGroupPreviewDrawer from './question-group-preview-drawer';
 import TypePartTypeTag from './type-part-type-tag';
@@ -127,6 +130,25 @@ function QuestionGroup() {
 
       <Space direction="vertical" style={{ width: '100%' }}>
         <Flex justify="flex-end">
+          <Popover
+            placement="bottomRight"
+            trigger="click"
+            title={t('Lọc')}
+            content={
+              <QuestionFilterForm
+                onSubmit={(values: any) => {
+                  setTableParams({
+                    ...tableParams,
+                    filters: values,
+                  });
+                }}
+              />
+            }
+          >
+            <Button icon={<FilterOutlined />} style={{ marginRight: 10 }}>
+              {t('Lọc')}
+            </Button>
+          </Popover>
           <div>
             <Space direction="horizontal" style={{ width: '100%' }}>
               <Input.Search

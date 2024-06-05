@@ -110,6 +110,9 @@ export const initial = {
   Nam: '',
   Nữ: '',
   Khác: '',
+  Lọc: '',
+  'Bỏ lọc': '',
+  Lưu: '',
 };
 
 export type TObj = typeof initial;

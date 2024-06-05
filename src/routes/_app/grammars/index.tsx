@@ -3,6 +3,7 @@ import {
   DownOutlined,
   EditOutlined,
   EyeOutlined,
+  FilterOutlined,
 } from '@ant-design/icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
@@ -22,6 +23,7 @@ import { useDebounce } from 'react-use';
 import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
+import GrammarFilterForm from '@/modules/grammars/components/grammar-filter-form';
 import GrammarFormDrawer from '@/modules/grammars/components/grammar-form-drawer';
 import GrammarPreviewDrawer from '@/modules/grammars/components/grammar-preview-drawer';
 import GrammarTypeTag from '@/modules/grammars/components/grammar-type-tag';
@@ -131,7 +133,26 @@ function GrammarListPage() {
             </Button>
           </Space>
 
-          <div>
+          <Space direction="horizontal">
+            <Popover
+              placement="bottomRight"
+              trigger="click"
+              title={t('Lọc')}
+              content={
+                <GrammarFilterForm
+                  onSubmit={(values: any) => {
+                    setTableParams({
+                      ...tableParams,
+                      filters: values,
+                    });
+                  }}
+                />
+              }
+            >
+              <Button icon={<FilterOutlined />} style={{ marginRight: 10 }}>
+                {t('Lọc')}
+              </Button>
+            </Popover>
             <Space direction="horizontal" style={{ width: '100%' }}>
               <Input.Search
                 placeholder={t('Tìm kiếm')}
@@ -139,7 +160,7 @@ function GrammarListPage() {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </Space>
-          </div>
+          </Space>
         </Flex>
 
         <Table

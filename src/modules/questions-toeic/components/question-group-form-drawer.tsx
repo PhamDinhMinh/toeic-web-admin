@@ -27,16 +27,8 @@ import {
   modulesQuill,
 } from '@/shared/components/quill/quill.model';
 
-import {
-  TypePart1,
-  TypePart2,
-  TypePart3,
-  TypePart4,
-  TypePart5,
-  TypePart6,
-  TypePart7,
-} from '../services/question-toeic.model';
 import questionToeicService from '../services/question-toeic.service';
+import useType from './use-select-type';
 
 type OptionType = {
   label: string;
@@ -65,6 +57,7 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
   const [form] = Form.useForm();
   const hiddenSubmitRef = useRef<any>();
   const uid = useId();
+  const { selectType } = useType();
   const queryClient = useQueryClient();
 
   const partId = Form.useWatch('partId', form);
@@ -76,27 +69,6 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
       dataRow && form.setFieldsValue(dataRow);
     }
   }, [action, dataRow, form]);
-
-  const selectType = () => {
-    switch (partId) {
-      case EExamTipsType.Part1:
-        return TypePart1;
-      case EExamTipsType.Part2:
-        return TypePart2;
-      case EExamTipsType.Part3:
-        return TypePart3;
-      case EExamTipsType.Part4:
-        return TypePart4;
-      case EExamTipsType.Part5:
-        return TypePart5;
-      case EExamTipsType.Part6:
-        return TypePart6;
-      case EExamTipsType.Part7:
-        return TypePart7;
-      default:
-        return TypePart1;
-    }
-  };
 
   const createMutation = useMutation({
     mutationFn: async (values: any) => {
@@ -285,7 +257,7 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                         ]}
                       >
                         <Select
-                          options={(selectType() ?? []) as OptionType[]}
+                          options={(selectType(partId) ?? []) as OptionType[]}
                           mode="multiple"
                         />
                       </Form.Item>

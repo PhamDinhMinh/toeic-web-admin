@@ -50,7 +50,7 @@ function ExamTipsListPage() {
       pageSize: 10,
     },
     filters: {
-      search: '',
+      keyword: '',
     },
   });
   const [openFormDrawer, setOpenFormDrawer] = useState<boolean>(false);
