@@ -9,7 +9,7 @@ const GrammarTypeTag = ({ type }: { type: number }) => {
       case EGrammarType.BASIC:
         return 'blue';
       case EGrammarType.ADVANCED:
-        return 'green';
+        return 'cyan';
       default:
         return 'default';
     }

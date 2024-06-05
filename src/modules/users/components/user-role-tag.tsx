@@ -9,7 +9,7 @@ const UserRoleTag = ({ role }: { role: string }) => {
       case EUserRole.ADMIN:
         return 'blue';
       case EUserRole.USER:
-        return 'green';
+        return 'cyan';
       default:
         return 'default';
     }
