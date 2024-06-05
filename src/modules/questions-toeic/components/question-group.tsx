@@ -282,6 +282,9 @@ function QuestionGroup() {
                             style={{
                               ...gridStyle,
                               minWidth: 100,
+                              maxHeight: 180,
+                              overflow: 'scroll',
+                              border: '1px solid #E0E0E0',
                             }}
                           >
                             {item.content ?? ''}
@@ -303,7 +306,7 @@ function QuestionGroup() {
                           </Flex>
                           <Space
                             style={{
-                              maxHeight: 150,
+                              maxHeight: 180,
                               overflow: 'scroll',
                               width: '100%',
                               border: '1px solid #E0E0E0',
