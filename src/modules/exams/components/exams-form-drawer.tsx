@@ -251,7 +251,6 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
               partId={item.partId}
               name={item.name}
               form={form}
-              key={index + 'button' + uid}
             />
           </Form.Item>
         ))}

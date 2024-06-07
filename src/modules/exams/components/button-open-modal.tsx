@@ -26,6 +26,7 @@ function ButtonOpenModal({
   const [rowData, setRowData] = useState<any>([]);
   const showModal = () => {
     setIsOpen(true);
+    setSelectedRowKeys(value);
   };
 
   const handleOk = () => {
@@ -47,12 +48,6 @@ function ButtonOpenModal({
     }
     return count;
   }, [rowData, value?.length]);
-
-  useEffect(() => {
-    if (value) {
-      setSelectedRowKeys([...value]);
-    }
-  }, [value]);
 
   return (
     <>
