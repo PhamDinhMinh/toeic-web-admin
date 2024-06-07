@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { App, Button, Drawer, Form, Input, Space } from 'antd';
+import { App, Button, Drawer, Form, Input, Space, Typography } from 'antd';
 import { useEffect, useId, useRef } from 'react';
 import 'react-quill/dist/quill.snow.css';
 
@@ -47,24 +47,6 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
       message.error(error.message);
     },
   });
-  //   queryKey: ['/question-single-list'],
-  //   queryFn: () =>
-  //     questionToeicService.getListSingleQuestion({
-  //       maxResultCount: 100,
-  //       skipCount: 0,
-  //     }),
-  // });
-
-  // const option = useMemo(() => {
-  //   return (
-  //     getListSingleQuestion?.data?.data?.map(
-  //       (item: IQuestionSingleResponse) => ({
-  //         value: item.id,
-  //         label: item.content,
-  //       }),
-  //     ) || []
-  //   );
-  // }, [getListSingleQuestion]);
 
   const itemPart = [
     {
@@ -106,16 +88,18 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
 
   useEffect(() => {
     if (action === 'create') {
-      //   form.setFieldsValue({
-      //     description: [{ text: '' }],
-      //     type: EExamType.Part1,
-      //   });
+      form.resetFields();
     } else {
       dataRow &&
         form.setFieldsValue({
-          title: dataRow.title,
-          type: dataRow.type,
-          description: dataRow.description,
+          nameExam: dataRow.nameExam,
+          listQuestionPart1: dataRow.listQuestionPart1,
+          listQuestionPart2: dataRow.listQuestionPart2,
+          listQuestionPart3: dataRow.listQuestionPart3,
+          listQuestionPart4: dataRow.listQuestionPart4,
+          listQuestionPart5: dataRow.listQuestionPart5,
+          listQuestionPart6: dataRow.listQuestionPart6,
+          listQuestionPart7: dataRow.listQuestionPart7,
         });
     }
   }, [action, dataRow, form]);
@@ -157,16 +141,15 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
         wrapperCol={{ span: 20 }}
         onFinish={(values) => {
           setLoading(true);
-          console.log(values, 'jjj');
-          // action === 'create'
-          //   ? createMutation.mutate({
-          //       ...values,
-          //     })
-          //   : '';
+          action === 'create'
+            ? createMutation.mutate({
+                ...values,
+              })
+            : '';
         }}
       >
         <Form.Item
-          name="title"
+          name="nameExam"
           label={t('Tên đề thi')}
           rules={[
             { required: true, message: t('Trường này không được bỏ trống!') },
@@ -184,7 +167,68 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
               {
                 required: true,
                 validator: async (_, listPart) => {
-                  if (!listPart || listPart.length !== item.quantityQuestion) {
+                  if (
+                    (!listPart || listPart.length !== item.quantityQuestion) &&
+                    (item.partId === 1 ||
+                      item.partId === 5 ||
+                      item.partId === 2)
+                  ) {
+                    return Promise.reject(
+                      new Error(
+                        t('Part') +
+                          ' ' +
+                          item.partId +
+                          ' ' +
+                          'phải có' +
+                          ' ' +
+                          item.quantityQuestion +
+                          ' ' +
+                          t('Câu hỏi').toLowerCase(),
+                      ),
+                    );
+                  }
+                  if (
+                    (!listPart ||
+                      listPart.length !== item.quantityQuestion / 3) &&
+                    (item.partId === 3 || item.partId === 4)
+                  ) {
+                    return Promise.reject(
+                      new Error(
+                        t('Part') +
+                          ' ' +
+                          item.partId +
+                          ' ' +
+                          'phải có' +
+                          ' ' +
+                          item.quantityQuestion +
+                          ' ' +
+                          t('Câu hỏi').toLowerCase(),
+                      ),
+                    );
+                  }
+                  if (
+                    (!listPart ||
+                      listPart.length !== item.quantityQuestion / 4) &&
+                    item.partId === 6
+                  ) {
+                    return Promise.reject(
+                      new Error(
+                        t('Part') +
+                          ' ' +
+                          item.partId +
+                          ' ' +
+                          'phải có' +
+                          ' ' +
+                          item.quantityQuestion +
+                          ' ' +
+                          t('Câu hỏi').toLowerCase(),
+                      ),
+                    );
+                  }
+                  if (
+                    (!listPart || listPart.length !== 15) &&
+                    item.partId === 7
+                  ) {
                     return Promise.reject(
                       new Error(
                         t('Part') +
@@ -207,9 +251,14 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
               partId={item.partId}
               name={item.name}
               form={form}
+              key={index + 'button' + uid}
             />
           </Form.Item>
         ))}
+        <Typography.Text style={{ color: '#fadb14' }}>
+          Chú ý: Vui lòng chọn part 7 theo yêu cầu sau: 4 nhóm 2 câu, 3 nhóm 3
+          câu, 3 nhóm 4 câu, 5 nhóm 5 câu. Xin cảm ơn!
+        </Typography.Text>
 
         <Form.Item shouldUpdate>
           {() => (

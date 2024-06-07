@@ -1,29 +1,27 @@
-import {
-  DeleteOutlined,
-  DownOutlined,
-  EditOutlined,
-  EyeOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import {
   Button,
-  Dropdown,
+  Card,
   Flex,
   Input,
   Space,
-  Table,
   TablePaginationConfig,
+  Typography,
 } from 'antd';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useDebounce } from 'react-use';
 
 import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
+import { useAppStore } from '@/modules/app/app.zustand';
 import ExamTipsPreviewDrawer from '@/modules/exam-tips/components/exam-tips-preview-drawer';
-import examTipsService from '@/modules/exam-tips/exam-tips.service';
 import ExamFormDrawer from '@/modules/exams/components/exams-form-drawer';
+import ModalFormRandom from '@/modules/exams/components/modal-form-random';
+import { IResponseExamAll } from '@/modules/exams/services/exams.model';
+import examService from '@/modules/exams/services/exams.service';
 
 export const Route = createFileRoute('/_app/exams/')({
   component: ExamTipsListPage,
@@ -32,7 +30,7 @@ export const Route = createFileRoute('/_app/exams/')({
 type TTableParams = {
   pagination: TablePaginationConfig;
   sortField?: string;
-  sortOrder?: string;
+  sortOrder?: any;
   filters?: Record<string, any>;
 };
 
@@ -42,17 +40,23 @@ function ExamTipsListPage() {
 
   useAppTitle(t('Xác nhận'));
   const [search, setSearch] = useState<string>('');
+  const uid = useId();
+  const setLoading = useAppStore((state) => state.setLoading);
 
   const [tableParams, setTableParams] = useState<TTableParams>({
     pagination: {
       current: 1,
-      pageSize: 10,
+      pageSize: 1000,
     },
     filters: {
       keyword: search,
     },
+    sortOrder: {
+      orderBy: true,
+    },
   });
   const [openFormDrawer, setOpenFormDrawer] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const [formMode, setFormMode] = useState<'create' | 'update'>('create');
   const [openPreviewDrawer, setOpenPreviewDrawer] = useState<boolean>(false);
   const [dataRow, setDataRow] = useState<any>();
@@ -70,32 +74,31 @@ function ExamTipsListPage() {
     [search],
   );
 
-  const {
-    data: getListGrammarQuery,
-    refetch,
-    isFetching,
-    isLoading,
-  } = useQuery({
-    queryKey: ['/exam-list', tableParams.pagination, tableParams.filters],
+  const { data: getExamList, refetch } = useQuery({
+    queryKey: [
+      '/exams-list',
+      tableParams.pagination,
+      tableParams.filters,
+      tableParams.sortOrder,
+    ],
     queryFn: () =>
-      examTipsService.getList({
-        maxResultCount: tableParams.pagination?.pageSize || 10,
-        skipCount:
-          tableParams.pagination?.current && tableParams.pagination?.pageSize
-            ? (tableParams.pagination?.current - 1) *
-              tableParams.pagination?.pageSize
-            : 0,
+      examService.getAll({
+        maxResultCount: tableParams.pagination?.pageSize,
+        skipCount: 0,
         ...tableParams.filters,
+        ...tableParams.sortOrder,
       }),
   });
 
-  const deleteEstateMutation = useMutation({
-    mutationFn: (id: number) => examTipsService.delete(id),
+  const { mutate: deleteExam } = useMutation({
+    mutationFn: (id: number) => examService.delete(id),
     onSuccess: () => {
       refetch();
+      setLoading(false);
       antdApp.message.success(t('Xoá thành công'));
     },
     onError: () => {
+      setLoading(false);
       antdApp.message.error(t('Xoá thất bại'));
     },
   });
@@ -116,6 +119,10 @@ function ExamTipsListPage() {
         dataRow={dataRow}
       />
 
+      {openModal && (
+        <ModalFormRandom openModal={openModal} setOpenModal={setOpenModal} />
+      )}
+
       <Space direction="vertical" style={{ width: '100%' }}>
         <Flex justify="space-between">
           <Space direction="horizontal" style={{ width: '100%' }}>
@@ -127,6 +134,14 @@ function ExamTipsListPage() {
               }}
             >
               {t('Tạo mới')}
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                setOpenModal(true);
+              }}
+            >
+              {t('Tạo đề ngẫu nhiên')}
             </Button>
           </Space>
 
@@ -141,99 +156,64 @@ function ExamTipsListPage() {
           </div>
         </Flex>
 
-        <Table
-          loading={isLoading || isFetching}
-          dataSource={getListGrammarQuery?.data?.data || []}
-          pagination={{
-            ...tableParams.pagination,
-            total: getListGrammarQuery?.data?.totalRecords ?? 0,
-          }}
-          rowKey={(record) => record.id}
-          bordered
-          columns={[
-            {
-              title: t('STT'),
-              key: 'index',
-              width: 50,
-              render: (_, __, index) => {
-                const currentPage = tableParams.pagination.current || 1;
-                const pageSize = tableParams.pagination.pageSize || 10;
-                return (currentPage - 1) * pageSize + index + 1;
-              },
-            },
-            {
-              title: t('Tiêu đề'),
-              dataIndex: 'title',
-              key: 'title',
-              width: 200,
-            },
-            {
-              title: t('Hành động'),
-              key: 'actions',
-              fixed: 'right',
-              width: 100,
-              render: (_, record) => (
-                <Dropdown
-                  menu={{
-                    items: [
-                      {
-                        label: t('Xem'),
-                        key: 'view',
-                        icon: <EyeOutlined />,
-                        onClick: () => {
-                          setDataRow(record);
-                          setOpenPreviewDrawer(true);
+        <Flex wrap="wrap" gap="large" justify="start" style={{ width: '100%' }}>
+          {getExamList?.data?.data?.map(
+            (item: IResponseExamAll, index: number) => (
+              <Card
+                key={index + 'card-exam' + uid}
+                style={{ marginBottom: 20 }}
+                cover={
+                  <img
+                    alt="example"
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-epQyS3GT2YSXiM_sXJhuWnE4W55dd5_O6A&s"
+                    style={{ padding: 10 }}
+                  />
+                }
+                actions={[
+                  <EyeOutlined
+                    key="watch"
+                    onClick={() => {
+                      setDataRow(item?.id);
+                      setOpenPreviewDrawer(true);
+                    }}
+                  />,
+                  <EditOutlined
+                    key="edit"
+                    onClick={() => {
+                      setFormMode('update');
+                      setDataRow(item);
+                      setOpenFormDrawer(true);
+                    }}
+                  />,
+                  <DeleteOutlined
+                    key="delete"
+                    color="error"
+                    onClick={() => {
+                      antdApp.modal.confirm({
+                        title: t('Xác nhận xoá'),
+                        content: t('Bạn có chắc chắn muốn xoá không?'),
+                        okText: t('Xác nhận'),
+                        cancelText: t('Huỷ'),
+                        onOk: async () => {
+                          setLoading(true);
+                          await deleteExam(item.id);
                         },
-                      },
-                      {
-                        label: t('Chỉnh sửa'),
-                        key: 'edit',
-                        icon: <EditOutlined />,
-                        onClick: () => {
-                          setFormMode('update');
-                          setDataRow(record);
-                          setOpenFormDrawer(true);
-                        },
-                      },
-                      {
-                        label: t('Xoá'),
-                        key: 'delete',
-                        icon: <DeleteOutlined />,
-                        danger: true,
-                        onClick: () => {
-                          antdApp.modal.confirm({
-                            title: t('Xác nhận xoá'),
-                            content: t('Bạn có chắc chắn muốn xoá không?'),
-                            okText: t('Xác nhận'),
-                            cancelText: t('Huỷ'),
-                            onOk: async () => {
-                              await deleteEstateMutation.mutateAsync(
-                                +record.id,
-                              );
-                            },
-                          });
-                        },
-                      },
-                    ],
-                  }}
+                      });
+                    }}
+                  />,
+                ]}
+                bodyStyle={{ padding: 0 }}
+              >
+                <Typography.Paragraph
+                  style={{ paddingLeft: 10 }}
+                  ellipsis={{ rows: 1, expandable: false }}
                 >
-                  <Button>
-                    <Space>
-                      {t('Hành động')}
-                      <DownOutlined />
-                    </Space>
-                  </Button>
-                </Dropdown>
-              ),
-            },
-          ]}
-          onChange={(pagination) => {
-            setTableParams({
-              ...tableParams,
-              pagination,
-            });
-          }}
-        />
+                  {item?.nameExam}
+                </Typography.Paragraph>
+              </Card>
+            ),
+          )}
+        </Flex>
       </Space>
     </>
   );

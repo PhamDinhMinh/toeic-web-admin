@@ -157,10 +157,8 @@ function ModalSelectQuestionGroup({
               width: 300,
               key: 'title',
               render: (imageUrl) =>
-                imageUrl.map((image: string) => (
-                  <>
-                    <Image width={250} src={image} />
-                  </>
+                imageUrl.map((image: string, index: number) => (
+                  <Image width={250} src={image} key={index + 'image' + uid} />
                 )),
               hidden: partId === 3 || partId === 4,
             },
@@ -213,43 +211,44 @@ function ModalSelectQuestionGroup({
                       <Space style={gridStyle}>{t('Giải thích')}</Space>
                     </Flex>
                     {questions.map((item: any, index: number) => (
-                      <>
-                        <Flex style={{ width: '100%' }}>
-                          <Space style={gridStyle}>
-                            <TypePartTypeTag
-                              partId={rowData.partId}
-                              type={item.type}
+                      <Flex
+                        style={{ width: '100%' }}
+                        key={index + 'question' + uid}
+                      >
+                        <Space style={gridStyle}>
+                          <TypePartTypeTag
+                            partId={rowData.partId}
+                            type={item.type}
+                            key={index + uid}
+                          />
+                        </Space>
+                        <Space
+                          style={{
+                            ...gridStyle,
+                            minWidth: 100,
+                          }}
+                        >
+                          {item.content ?? ''}
+                        </Space>
+                        <Flex style={gridStyle} vertical>
+                          {item?.answers.map((answer: any, index: number) => (
+                            <div
                               key={index + uid}
-                            />
-                          </Space>
-                          <Space
-                            style={{
-                              ...gridStyle,
-                              minWidth: 100,
-                            }}
-                          >
-                            {item.content ?? ''}
-                          </Space>
-                          <Flex style={gridStyle} vertical>
-                            {item?.answers.map((answer: any, index: number) => (
-                              <div
-                                key={index}
-                                style={{
-                                  color: answer.isBoolean
-                                    ? 'rgb(36, 208, 163)'
-                                    : 'inherit',
-                                }}
-                              >
-                                {String.fromCharCode(65 + index)}:{' '}
-                                {answer.content ?? ''}
-                              </div>
-                            ))}
-                          </Flex>
-                          <Space style={gridStyle}>
-                            {item.transcription ?? ''}
-                          </Space>
+                              style={{
+                                color: answer.isBoolean
+                                  ? 'rgb(36, 208, 163)'
+                                  : 'inherit',
+                              }}
+                            >
+                              {String.fromCharCode(65 + index)}:{' '}
+                              {answer.content ?? ''}
+                            </div>
+                          ))}
                         </Flex>
-                      </>
+                        <Space style={gridStyle}>
+                          {item.transcription ?? ''}
+                        </Space>
+                      </Flex>
                     ))}
                   </div>
                 );

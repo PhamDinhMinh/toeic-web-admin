@@ -225,7 +225,7 @@ function ModalSelectQuestionSingle({
                 <div>
                   {answers.map((answer: any, index: number) => (
                     <div
-                      key={index}
+                      key={index + uid + 'answer'}
                       style={{
                         color: answer.isBoolean
                           ? 'rgb(36, 208, 163)'
