@@ -36,7 +36,7 @@ import TypePartTypeTag from './type-part-type-tag';
 type TTableParams = {
   pagination: TablePaginationConfig;
   sortField?: string;
-  sortOrder?: string;
+  sortOrder?: any;
   filters?: Record<string, any>;
 };
 
@@ -54,6 +54,9 @@ function QuestionGroup() {
     },
     filters: {
       keyword: '',
+    },
+    sortOrder: {
+      orderBy: true,
     },
   });
 
@@ -95,6 +98,7 @@ function QuestionGroup() {
       '/question-group-list',
       tableParams.pagination,
       tableParams.filters,
+      tableParams.sortOrder,
     ],
     queryFn: () =>
       questionToeicService.getListGroupQuestion({
@@ -105,6 +109,7 @@ function QuestionGroup() {
               tableParams.pagination?.pageSize
             : 0,
         ...tableParams.filters,
+        ...tableParams.sortOrder,
       }),
   });
 
@@ -257,7 +262,7 @@ function QuestionGroup() {
               key: 'questions',
               render: (questions, rowData) => {
                 return (
-                  <div style={{}}>
+                  <div style={{}} key={'questions' + uid}>
                     <Flex style={{ width: '100%' }}>
                       <Space style={{ ...gridStyle, maxWidth: 300 }}>
                         {t('Dạng câu')}
@@ -269,65 +274,66 @@ function QuestionGroup() {
                       <Space style={gridStyle}>{t('Giải thích')}</Space>
                     </Flex>
                     {questions.map((item: any, index: number) => (
-                      <>
-                        <Flex style={{ width: '100%' }}>
-                          <Space style={{ ...gridStyle, overflow: 'scroll' }}>
-                            <TypePartTypeTag
-                              partId={rowData.partId}
-                              type={item.type}
-                              key={index + uid}
-                            />
-                          </Space>
-                          <Flex
-                            style={{
-                              ...gridStyle,
-                              minWidth: 100,
-                              maxHeight: 200,
-                              overflow: 'scroll',
-                              alignItems: 'center',
-                              border: '1px solid #E0E0E0',
-                            }}
-                          >
-                            {item.content ?? ''}
-                          </Flex>
-                          <Flex
-                            style={{
-                              ...gridStyle,
-                              minWidth: 100,
-                              maxHeight: 200,
-                              padding: '6px',
-                            }}
-                            vertical
-                            justify="center"
-                          >
-                            {item?.answers.map((answer: any, index: number) => (
-                              <div
-                                key={index}
-                                style={{
-                                  color: answer.isBoolean
-                                    ? 'rgb(36, 208, 163)'
-                                    : 'inherit',
-                                }}
-                              >
-                                {String.fromCharCode(65 + index)}:{' '}
-                                {answer.content ?? ''}
-                              </div>
-                            ))}
-                          </Flex>
-                          <Flex
-                            style={{
-                              maxHeight: 200,
-                              overflowY: 'scroll',
-                              width: '100%',
-                              height: '100%',
-                              border: '1px solid #E0E0E0',
-                              padding: '6px',
-                            }}
-                          >
-                            {item.transcription ?? ''}
-                          </Flex>
+                      <Flex
+                        style={{ width: '100%' }}
+                        key={index + 'question' + uid}
+                      >
+                        <Space style={{ ...gridStyle, overflow: 'scroll' }}>
+                          <TypePartTypeTag
+                            partId={rowData.partId}
+                            type={item.type}
+                            key={index + uid}
+                          />
+                        </Space>
+                        <Flex
+                          style={{
+                            ...gridStyle,
+                            minWidth: 100,
+                            maxHeight: 200,
+                            overflow: 'scroll',
+                            alignItems: 'center',
+                            border: '1px solid #E0E0E0',
+                          }}
+                        >
+                          {item.content ?? ''}
                         </Flex>
-                      </>
+                        <Flex
+                          style={{
+                            ...gridStyle,
+                            minWidth: 100,
+                            maxHeight: 200,
+                            padding: '6px',
+                          }}
+                          vertical
+                          justify="center"
+                        >
+                          {item?.answers.map((answer: any, index: number) => (
+                            <div
+                              key={index}
+                              style={{
+                                color: answer.isBoolean
+                                  ? 'rgb(36, 208, 163)'
+                                  : 'inherit',
+                              }}
+                            >
+                              {String.fromCharCode(65 + index)}:{' '}
+                              {answer.content ?? ''}
+                            </div>
+                          ))}
+                        </Flex>
+                        <Flex
+                          style={{
+                            maxHeight: 200,
+                            overflowY: 'scroll',
+                            width: '100%',
+                            height: '100%',
+                            border: '1px solid #E0E0E0',
+                            padding: '6px',
+                          }}
+                        >
+                          {item.transcription ?? ''}
+                        </Flex>
+                      </Flex>
                     ))}
                   </div>
                 );

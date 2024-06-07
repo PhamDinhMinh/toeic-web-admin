@@ -35,7 +35,7 @@ import TypePartTypeTag from './type-part-type-tag';
 type TTableParams = {
   pagination: TablePaginationConfig;
   sortField?: string;
-  sortOrder?: string;
+  sortBy?: any;
   filters?: Record<string, any>;
 };
 
@@ -51,6 +51,9 @@ function QuestionSingle() {
     pagination: {
       current: 1,
       pageSize: 20,
+    },
+    sortBy: {
+      orderBy: true,
     },
     filters: {
       keyword: '',
@@ -83,6 +86,7 @@ function QuestionSingle() {
       '/question-single-list',
       tableParams.pagination,
       tableParams.filters,
+      tableParams.sortBy,
     ],
     queryFn: () =>
       questionToeicService.getListSingleQuestion({
@@ -93,6 +97,7 @@ function QuestionSingle() {
               tableParams.pagination?.pageSize
             : 0,
         ...tableParams.filters,
+        ...tableParams.sortBy,
       }),
   });
 

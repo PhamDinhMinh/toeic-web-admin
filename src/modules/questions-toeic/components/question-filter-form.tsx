@@ -56,13 +56,7 @@ const QuestionFilterForm = ({ onSubmit, single }: TQuestionFilterFormProps) => {
         />
       </Form.Item>
       {single && (
-        <Form.Item
-          name="type"
-          label={t('Dạng bài')}
-          rules={[
-            { required: true, message: t('Trường này không được bỏ trống!') },
-          ]}
-        >
+        <Form.Item name="type" label={t('Dạng bài')}>
           <Select
             options={(selectType(partId) ?? []) as OptionType[]}
             mode="multiple"

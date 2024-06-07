@@ -78,7 +78,7 @@ function ExamTipsListPage() {
     isFetching,
     isLoading,
   } = useQuery({
-    queryKey: ['/exam-list', tableParams.pagination, tableParams.filters],
+    queryKey: ['/exam-tips-list', tableParams.pagination, tableParams.filters],
     queryFn: () =>
       examTipsService.getList({
         maxResultCount: tableParams.pagination?.pageSize || 10,
@@ -91,7 +91,7 @@ function ExamTipsListPage() {
       }),
   });
 
-  const deleteEstateMutation = useMutation({
+  const deleteExamTipMutation = useMutation({
     mutationFn: (id: number) => examTipsService.delete(id),
     onSuccess: () => {
       refetch();
@@ -250,7 +250,7 @@ function ExamTipsListPage() {
                             okText: t('Xác nhận'),
                             cancelText: t('Huỷ'),
                             onOk: async () => {
-                              await deleteEstateMutation.mutateAsync(
+                              await deleteExamTipMutation.mutateAsync(
                                 +record.id,
                               );
                             },
