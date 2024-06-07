@@ -113,6 +113,7 @@ export const initial = {
   Lọc: '',
   'Bỏ lọc': '',
   Lưu: '',
+  'Tạo đề ngẫu nhiên': '',
 };
 
 export type TObj = typeof initial;

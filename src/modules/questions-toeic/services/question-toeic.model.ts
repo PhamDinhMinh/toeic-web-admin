@@ -383,4 +383,5 @@ export interface IParamsGet {
   keyword?: string;
   skipCount: number;
   maxResultCount: number;
+  orderBy?: boolean;
 }
