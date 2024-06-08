@@ -7,6 +7,7 @@ import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
 import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
 
+import { IResponseExamAll } from '../services/exams.model';
 import examService from '../services/exams.service';
 import ButtonOpenModal from './button-open-modal';
 
@@ -14,7 +15,7 @@ type TExamFormDrawerProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
   action: 'create' | 'update';
-  dataRow?: any;
+  dataRow?: IResponseExamAll;
   refetch?: () => Promise<any>;
 };
 
@@ -39,6 +40,21 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
       setLoading(false);
       refetch && (await refetch());
       message.success(t('Tạo mới thành công'));
+      setOpen(false);
+      form.resetFields();
+    },
+    onError: (error) => {
+      setLoading(false);
+      message.error(error.message);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: any) => examService.update(data),
+    onSuccess: async () => {
+      setLoading(false);
+      refetch && (await refetch());
+      message.success(t('Chỉnh sửa thành công'));
       setOpen(false);
       form.resetFields();
     },
@@ -121,8 +137,8 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
           <Button
             type="primary"
             htmlType="submit"
-            loading={createMutation.isPending}
-            disabled={createMutation.isPending}
+            loading={createMutation.isPending || updateMutation.isPending}
+            disabled={createMutation.isPending || updateMutation.isPending}
             onClick={() => {
               form.submit();
               hiddenSubmitRef.current.click();
@@ -145,7 +161,7 @@ const ExamFormDrawer: React.FC<TExamFormDrawerProps> = ({
             ? createMutation.mutate({
                 ...values,
               })
-            : '';
+            : updateMutation.mutate({ ...values, id: dataRow?.id });
         }}
       >
         <Form.Item

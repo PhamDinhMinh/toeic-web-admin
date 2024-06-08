@@ -30,6 +30,14 @@ class ExamService {
     });
   }
 
+  update(input: any) {
+    return httpService.request<any>({
+      url: this.endpoint + '/Update',
+      method: 'PUT',
+      data: input,
+    });
+  }
+
   delete(id: number) {
     return httpService.request<void>({
       url: this.endpoint + '/Delete',
