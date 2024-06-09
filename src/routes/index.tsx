@@ -5,5 +5,5 @@ export const Route = createFileRoute('/')({
 });
 
 function IndexPage() {
-  return <Navigate to="/grammars" />;
+  return <Navigate to="/dash-board" />;
 }

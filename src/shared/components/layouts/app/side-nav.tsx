@@ -2,6 +2,7 @@ import { useNavigate } from '@tanstack/react-router';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Typography } from 'antd';
 import {
+  BarChart4,
   BookOpenCheck,
   BookOpenText,
   Lightbulb,
@@ -31,6 +32,11 @@ const MainSideNav = ({ collapsed, setCollapsed }: TMainSideNavProps) => {
 
   const items: MenuProps['items'] = useMemo(
     () => [
+      {
+        key: '/dash-board',
+        icon: <BarChart4 size={18} />,
+        label: t('Thống kê'),
+      },
       {
         key: '/grammars',
         icon: <BookOpenText size={18} />,

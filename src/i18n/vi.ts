@@ -114,6 +114,13 @@ export const initial = {
   'Bỏ lọc': '',
   Lưu: '',
   'Tạo đề ngẫu nhiên': '',
+  'Thống kê': '',
+  'Thống kê người dùng': '',
+  'Tổng số tài khoản người dùng': '',
+  'Tổng số bài viết đã đăng': '',
+  'Thống kê câu hỏi': '',
+  'Số câu hỏi được thêm': '',
+  Tháng: '',
 };
 
 export type TObj = typeof initial;
