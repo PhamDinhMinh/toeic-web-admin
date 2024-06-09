@@ -34,7 +34,7 @@ const ExamPreviewDrawer: React.FC<TExamPreviewDrawer> = ({
   const { t } = useTranslation();
   const uid = useId();
 
-  const { data: getDetailExam, refetch } = useQuery({
+  const { data: getDetailExam } = useQuery({
     queryKey: ['/exams-detail', id],
     queryFn: () =>
       examService.getById({

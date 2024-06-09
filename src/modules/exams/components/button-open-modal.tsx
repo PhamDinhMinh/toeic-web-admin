@@ -1,5 +1,5 @@
 import { Button, Flex, Modal, Typography } from 'antd';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { EExamTipsType } from '@/modules/exam-tips/exam-tips.model';
 

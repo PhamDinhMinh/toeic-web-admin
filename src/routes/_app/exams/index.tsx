@@ -17,7 +17,6 @@ import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
-import ExamTipsPreviewDrawer from '@/modules/exam-tips/components/exam-tips-preview-drawer';
 import ExamPreviewDrawer from '@/modules/exams/components/exam-form-preview';
 import ExamFormDrawer from '@/modules/exams/components/exams-form-drawer';
 import ModalFormRandom from '@/modules/exams/components/modal-form-random';
