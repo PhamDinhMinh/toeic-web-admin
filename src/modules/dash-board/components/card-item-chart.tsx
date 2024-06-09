@@ -21,6 +21,7 @@ type TCardItemChart = {
   titleSize: number;
   optionSize: number;
   legendSize: number;
+  loading?: boolean;
 };
 
 const CardItemChart = (props: TCardItemChart) => {
@@ -40,6 +41,7 @@ const CardItemChart = (props: TCardItemChart) => {
     titleSize,
     optionSize,
     legendSize,
+    loading,
   } = props;
 
   const onEvents = {
@@ -92,6 +94,7 @@ const CardItemChart = (props: TCardItemChart) => {
         </Space>
       </Space>
       <ReactEcharts
+        loadingOption={loading}
         onEvents={onEvents}
         key={Date.now()}
         theme="light"
