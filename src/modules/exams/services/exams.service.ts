@@ -1,7 +1,12 @@
 import httpService from '@/shared/http-service';
-import { TPaginated } from '@/shared/types/paginated.type';
+import { TNotPaginated, TPaginated } from '@/shared/types/paginated.type';
 
-import { ICreateInput, IParamsGet, IResponseExamAll } from './exams.model';
+import {
+  ICreateInput,
+  IParamsGet,
+  IResponseDetailExam,
+  IResponseExamAll,
+} from './exams.model';
 
 class ExamService {
   endpoint = '/api/services/app/ExamToeic';
@@ -25,6 +30,14 @@ class ExamService {
   getAll(input: IParamsGet) {
     return httpService.request<TPaginated<IResponseExamAll>>({
       url: this.endpoint + '/GetAll',
+      method: 'GET',
+      params: input,
+    });
+  }
+
+  getById(input: { id: number }) {
+    return httpService.request<TNotPaginated<IResponseDetailExam>>({
+      url: this.endpoint + '/GetById',
       method: 'GET',
       params: input,
     });

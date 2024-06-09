@@ -29,3 +29,17 @@ export interface IResponseExamAll {
   creatorId: number;
   creationTime: any;
 }
+
+export interface IResponseDetailExam {
+  id: number;
+  nameExam: string;
+  creationTime: any;
+  creatorName: string;
+  part1: any[];
+  part2: any[];
+  part3: any[];
+  part4: any[];
+  part5: any[];
+  part6: any[];
+  part7: any[];
+}

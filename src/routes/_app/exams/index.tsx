@@ -18,6 +18,7 @@ import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
 import { useAppStore } from '@/modules/app/app.zustand';
 import ExamTipsPreviewDrawer from '@/modules/exam-tips/components/exam-tips-preview-drawer';
+import ExamPreviewDrawer from '@/modules/exams/components/exam-form-preview';
 import ExamFormDrawer from '@/modules/exams/components/exams-form-drawer';
 import ModalFormRandom from '@/modules/exams/components/modal-form-random';
 import { IResponseExamAll } from '@/modules/exams/services/exams.model';
@@ -59,7 +60,7 @@ function ExamTipsListPage() {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [formMode, setFormMode] = useState<'create' | 'update'>('create');
   const [openPreviewDrawer, setOpenPreviewDrawer] = useState<boolean>(false);
-  const [dataRow, setDataRow] = useState<any>();
+  const [dataRow, setDataRow] = useState<IResponseExamAll>();
 
   useDebounce(
     () => {
@@ -113,10 +114,10 @@ function ExamTipsListPage() {
         refetch={refetch}
       />
 
-      <ExamTipsPreviewDrawer
+      <ExamPreviewDrawer
         open={openPreviewDrawer}
         setOpen={setOpenPreviewDrawer}
-        dataRow={dataRow}
+        id={dataRow?.id ?? 0}
       />
 
       {openModal && (
@@ -173,7 +174,7 @@ function ExamTipsListPage() {
                   <EyeOutlined
                     key="watch"
                     onClick={() => {
-                      setDataRow(item?.id);
+                      setDataRow(item);
                       setOpenPreviewDrawer(true);
                     }}
                   />,
