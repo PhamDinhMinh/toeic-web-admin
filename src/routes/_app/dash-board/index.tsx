@@ -3,6 +3,7 @@ import { Col, Divider, Flex, Row, Select } from 'antd';
 import { useState } from 'react';
 
 import useTranslation from '@/hooks/useTranslation';
+import ChartCorrectQuestionStatistics from '@/modules/dash-board/components/chart-statistic-correct-question';
 import ChartQuestionStatistics from '@/modules/dash-board/components/chart-statistic-question';
 import ChartUserStatistics from '@/modules/dash-board/components/chart-statistic-user';
 import TitleHeading from '@/shared/components/title-heading';
@@ -38,7 +39,22 @@ function DashBoardPage() {
       </Flex>
 
       <Divider />
-
+      <Row gutter={24}>
+        <Col span={7} style={{ height: '200px' }} />
+        <Col
+          span={10}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            height: '400px',
+            boxShadow: '0px 0px 2px 0px #888888',
+            borderRadius: 10,
+            marginBottom: 20,
+          }}
+        >
+          <ChartCorrectQuestionStatistics />
+        </Col>
+      </Row>
       <Row gutter={24}>
         <Col span={0.5} style={{ height: '400px' }} />
         <Col

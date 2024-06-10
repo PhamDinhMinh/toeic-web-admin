@@ -121,6 +121,17 @@ export const initial = {
   'Thống kê câu hỏi': '',
   'Số câu hỏi được thêm': '',
   Tháng: '',
+  'Thống kê tỷ lệ câu hỏi': '',
+  'Câu nghe': '',
+  'Câu đọc': '',
+  'Tỷ lệ đúng': '',
+  'Tỷ lệ sai': '',
+  'Phần trăm sai': '',
+  'Phần trăm đúng': '',
+  Listening: '',
+  Reading: '',
+  'Tỷ lệ làm bài': '',
+  'Số câu hỏi': '',
 };
 
 export type TObj = typeof initial;

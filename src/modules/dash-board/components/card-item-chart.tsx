@@ -4,7 +4,7 @@ import ReactEcharts from 'echarts-for-react';
 type TCardItemChart = {
   title: string;
   legend: string[];
-  xAxis: any[];
+  xAxis?: any[];
   yAxis?: any[];
   series: any[];
   paddingLeft?: number;
@@ -22,6 +22,7 @@ type TCardItemChart = {
   optionSize: number;
   legendSize: number;
   loading?: boolean;
+  tooltip?: any;
 };
 
 const CardItemChart = (props: TCardItemChart) => {
@@ -42,6 +43,7 @@ const CardItemChart = (props: TCardItemChart) => {
     optionSize,
     legendSize,
     loading,
+    tooltip,
   } = props;
 
   const onEvents = {
@@ -100,16 +102,18 @@ const CardItemChart = (props: TCardItemChart) => {
         theme="light"
         option={{
           color: ['#3398DB'],
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'shadow',
-            },
-            textStyle: {
-              fontFamily: 'sans-serif',
-              fontSize: optionSize,
-            },
-          },
+          tooltip: tooltip
+            ? tooltip
+            : {
+                trigger: 'axis',
+                axisPointer: {
+                  type: 'shadow',
+                },
+                textStyle: {
+                  fontFamily: 'sans-serif',
+                  fontSize: optionSize,
+                },
+              },
           legend: {
             data: legend,
             textStyle: {

@@ -1,7 +1,7 @@
 import httpService from '@/shared/http-service';
 import { TNotPaginated } from '@/shared/types/paginated.type';
 
-import { IParamsGetStatistic } from './dash-board.model';
+import { IParamsGetStatistic, IResponseCorrect } from './dash-board.model';
 
 class DashBoardService {
   endpoint = '/api/services/app/Statistics';
@@ -27,6 +27,13 @@ class DashBoardService {
       url: this.endpoint + '/StatisticsQuestion',
       method: 'GET',
       params: input,
+    });
+  }
+
+  statisticsCorrectQuestion() {
+    return httpService.request<TNotPaginated<IResponseCorrect>>({
+      url: this.endpoint + '/StatisticsCorrectQuestion',
+      method: 'GET',
     });
   }
 }
