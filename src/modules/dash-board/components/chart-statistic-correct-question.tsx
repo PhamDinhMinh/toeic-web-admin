@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { Spin } from 'antd';
-import { color } from 'echarts';
 import { useMemo } from 'react';
 
 import useTranslation from '@/hooks/useTranslation';
@@ -20,7 +19,6 @@ const ChartCorrectQuestionStatistics = () => {
     queryFn: () => dashBoardService.statisticsCorrectQuestion(),
   });
 
-  console.log(statisticsCorrectQuestion?.data?.data, 'hehe');
   const statisticsTotal = useMemo(
     () => statisticsCorrectQuestion?.data?.data,
     [statisticsCorrectQuestion?.data?.data],
