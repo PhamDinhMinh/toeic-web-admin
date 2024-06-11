@@ -9,7 +9,6 @@ const UploadFile = ({ value, onChange, accept }: any) => {
       return false;
     },
   };
-  console.log(value, '');
 
   return (
     <>

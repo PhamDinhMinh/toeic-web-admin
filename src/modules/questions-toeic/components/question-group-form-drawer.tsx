@@ -369,7 +369,6 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
                                         initialValue={false}
                                         getValueFromEvent={(e) => {
                                           fields.forEach((f) => {
-                                            console.log(f);
                                             form.setFieldValue(
                                               [
                                                 'questions',

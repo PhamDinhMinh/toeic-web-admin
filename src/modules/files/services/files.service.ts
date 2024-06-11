@@ -4,7 +4,6 @@ class FileService {
   endpoint = '/api/services/app/Upload';
 
   async uploadFile(file: any) {
-    console.log(file, 'hehe');
     const submitData = new FormData();
     submitData.append('files', file[0]);
     return await httpService.request<any>({
@@ -18,7 +17,6 @@ class FileService {
   async uploadImages(images = []) {
     const submitData = new FormData();
     images.forEach((image) => submitData.append('files', image));
-    // console.log(images, 'hehe');
     return await httpService.request<any[]>({
       url: this.endpoint + '/UploadImages',
       contentType: 'multipart/form-data',
