@@ -278,7 +278,12 @@ function QuestionGroup() {
                         style={{ width: '100%' }}
                         key={index + 'question' + uid}
                       >
-                        <Space style={{ ...gridStyle, overflow: 'scroll' }}>
+                        <Space
+                          style={{
+                            ...gridStyle,
+                            overflow: 'scroll',
+                          }}
+                        >
                           <TypePartTypeTag
                             partId={rowData.partId}
                             type={item.type}
@@ -295,7 +300,7 @@ function QuestionGroup() {
                             border: '1px solid #E0E0E0',
                           }}
                         >
-                          {item.content ?? ''}
+                          {item.content ?? ' '}
                         </Flex>
                         <Flex
                           style={{
@@ -331,7 +336,7 @@ function QuestionGroup() {
                             padding: '6px',
                           }}
                         >
-                          {item.transcription ?? ''}
+                          {item.transcription ?? ' '}
                         </Flex>
                       </Flex>
                     ))}
