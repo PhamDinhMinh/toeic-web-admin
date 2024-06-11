@@ -42,9 +42,17 @@ class QuestionToeicService {
     });
   }
 
-  delete(id: number) {
+  updateQuestionSingle(params: any) {
     return httpService.request<void>({
-      url: this.endpoint + '/Delete',
+      url: this.endpoint + '/UpdateQuestionSingle',
+      method: 'PUT',
+      data: params,
+    });
+  }
+
+  deleteQuestionSingle(id: number) {
+    return httpService.request<void>({
+      url: this.endpoint + '/DeleteQuestionSingle',
       method: 'DELETE',
       params: {
         id: id,

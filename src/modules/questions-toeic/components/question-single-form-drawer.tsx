@@ -95,6 +95,22 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (data: any) =>
+      questionToeicService.updateQuestionSingle({ ...data, id: dataRow.id }),
+    onSuccess: async () => {
+      setLoading(false);
+      refetch && (await refetch());
+      message.success(t('Chỉnh sửa thành công'));
+      setOpen(false);
+      form.resetFields();
+    },
+    onError: (error) => {
+      setLoading(false);
+      message.error(error.message);
+    },
+  });
+
   return (
     <Drawer
       title={
@@ -112,7 +128,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
           <Button
             type="primary"
             htmlType="submit"
-            disabled={createMutation.isPending}
+            disabled={createMutation.isPending || updateMutation.isPending}
             onClick={() => {
               form.submit();
               hiddenSubmitRef.current.click();
@@ -131,7 +147,9 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
         wrapperCol={{ span: 20 }}
         onFinish={(values) => {
           setLoading(true);
-          action === 'create' ? createMutation.mutate(values) : '';
+          action === 'create'
+            ? createMutation.mutate(values)
+            : updateMutation.mutate(values);
         }}
       >
         <Form.Item
@@ -140,6 +158,7 @@ const QuestionSingleFormDrawer: React.FC<TQuestionFormDrawer> = ({
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 8 }}
           initialValue={2}
+          hidden={true}
         >
           <Select options={[{ value: 2, label: t('Part') + ' 1' }]} />
         </Form.Item>

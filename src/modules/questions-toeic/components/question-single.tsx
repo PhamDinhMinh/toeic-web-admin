@@ -5,7 +5,7 @@ import {
   EyeOutlined,
   FilterOutlined,
 } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Button,
   Dropdown,
@@ -24,6 +24,7 @@ import { useDebounce } from 'react-use';
 import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
+import { useAppStore } from '@/modules/app/app.zustand';
 import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
 
 import questionToeicService from '../services/question-toeic.service';
@@ -67,6 +68,7 @@ function QuestionSingle() {
 
   const [dataRow, setDataRow] = useState<any>();
   const [search, setSearch] = useState<string>('');
+  const setLoading = useAppStore((state) => state.setLoading);
 
   const setOpenSingleFormDrawer = useCallback((item: boolean) => {
     setStateOpen((prev) => ({ ...prev, openSingleFormDrawer: item }));
@@ -113,6 +115,19 @@ function QuestionSingle() {
     1000,
     [search],
   );
+
+  const deleteQuestion = useMutation({
+    mutationFn: (id: number) => questionToeicService.deleteQuestionSingle(id),
+    onSuccess: () => {
+      setLoading(false);
+      refetch();
+      antdApp.message.success(t('Xoá thành công'));
+    },
+    onError: () => {
+      setLoading(false);
+      antdApp.message.error(t('Xoá thất bại'));
+    },
+  });
 
   return (
     <>
@@ -283,7 +298,10 @@ function QuestionSingle() {
                             content: t('Bạn có chắc chắn muốn xoá không?'),
                             okText: t('Xác nhận'),
                             cancelText: t('Huỷ'),
-                            onOk: async () => {},
+                            onOk: async () => {
+                              setLoading(true);
+                              await deleteQuestion.mutateAsync(+record.id);
+                            },
                           });
                         },
                       },
