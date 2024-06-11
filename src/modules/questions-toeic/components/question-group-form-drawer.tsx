@@ -100,6 +100,41 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async (values: any) => {
+      let dataUpdate = values;
+      if (values.audioUrl && values.audioUrl instanceof File) {
+        const response = await fileService.uploadFile([values.audioUrl]);
+        form.setFieldValue('audioUrl', response.data[0]);
+        dataUpdate = { ...dataUpdate, audioUrl: response.data[0] };
+      }
+      if (
+        values.imageUrl &&
+        values.imageUrl.some((img: any) => img instanceof File)
+      ) {
+        const mappedImages = values.imageUrl.map((i: any) => i.originFileObj);
+        const response = await fileService.uploadImages(mappedImages);
+        form.setFieldValue('imageUrl', response.data);
+        dataUpdate = { ...dataUpdate, imageUrl: response.data };
+      }
+      return questionToeicService.updateQuestionGroup({
+        ...dataUpdate,
+        id: dataRow.id,
+      });
+    },
+    onSuccess: async () => {
+      setLoading(false);
+      refetch && (await refetch());
+      message.success(t('Chỉnh sửa thành công'));
+      setOpen(false);
+      form.resetFields();
+    },
+    onError: (error) => {
+      setLoading(false);
+      message.error(error.message);
+    },
+  });
+
   return (
     <Drawer
       title={
@@ -121,7 +156,7 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
               form.submit();
               hiddenSubmitRef.current.click();
             }}
-            disabled={createMutation.isPending}
+            disabled={createMutation.isPending || updateMutation.isPending}
           >
             {t('Xác nhận')}
           </Button>
@@ -136,7 +171,9 @@ const QuestionGroupFormDrawer: React.FC<TQuestionGroupFormDrawer> = ({
         wrapperCol={{ span: 20 }}
         onFinish={(values) => {
           setLoading(true);
-          action === 'create' ? createMutation.mutate(values) : '';
+          action === 'create'
+            ? createMutation.mutate(values)
+            : updateMutation.mutate(values);
         }}
       >
         {/* <Form.Item

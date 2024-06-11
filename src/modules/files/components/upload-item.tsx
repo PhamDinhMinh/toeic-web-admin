@@ -19,9 +19,9 @@ const UploadItem = ({ file, onCrop, onClickRemove }: TUploadItemProps) => {
   const prevFileUrls = fileUrlsRef.current;
 
   const fileUrl =
-    typeof file.originFileObj === 'object'
+    typeof file?.originFileObj === 'object'
       ? URL.createObjectURL(file.originFileObj as any)
-      : '';
+      : file.toString() ?? '';
 
   const handleOkCrop = (blob: Blob) => {
     const { type, name, uid, originFileObj } = file;

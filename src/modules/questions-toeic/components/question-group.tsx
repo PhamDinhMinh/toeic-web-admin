@@ -5,7 +5,7 @@ import {
   EyeOutlined,
   FilterOutlined,
 } from '@ant-design/icons';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Button,
   Dropdown,
@@ -25,6 +25,7 @@ import { useDebounce } from 'react-use';
 import useApp from '@/hooks/use-app';
 import { useAppTitle } from '@/hooks/use-app-title';
 import useTranslation from '@/hooks/useTranslation';
+import { useAppStore } from '@/modules/app/app.zustand';
 import PartTypeTag from '@/modules/exam-tips/components/part-type-tag';
 
 import questionToeicService from '../services/question-toeic.service';
@@ -46,6 +47,7 @@ function QuestionGroup() {
   const uid = useId();
 
   useAppTitle(t('Xác nhận'));
+  const setLoading = useAppStore((state) => state.setLoading);
 
   const [tableParams, setTableParams] = useState<TTableParams>({
     pagination: {
@@ -111,6 +113,19 @@ function QuestionGroup() {
         ...tableParams.filters,
         ...tableParams.sortOrder,
       }),
+  });
+
+  const deleteQuestion = useMutation({
+    mutationFn: (id: number) => questionToeicService.deleteQuestionGroup(id),
+    onSuccess: () => {
+      setLoading(false);
+      refetch();
+      antdApp.message.success(t('Xoá thành công'));
+    },
+    onError: () => {
+      setLoading(false);
+      antdApp.message.error(t('Xoá thất bại'));
+    },
   });
 
   return (
@@ -275,7 +290,7 @@ function QuestionGroup() {
                     </Flex>
                     {questions.map((item: any, index: number) => (
                       <Flex
-                        style={{ width: '100%' }}
+                        style={{ width: '100%', height: '100%' }}
                         key={index + 'question' + uid}
                       >
                         <Space
@@ -328,13 +343,14 @@ function QuestionGroup() {
                         </Flex>
                         <Flex
                           style={{
+                            ...gridStyle,
                             maxHeight: 200,
                             overflowY: 'scroll',
-                            width: '100%',
-                            height: '100%',
                             border: '1px solid #E0E0E0',
                             padding: '6px',
                           }}
+                          vertical
+                          justify="start"
                         >
                           {item.transcription ?? ' '}
                         </Flex>
@@ -383,7 +399,10 @@ function QuestionGroup() {
                             content: t('Bạn có chắc chắn muốn xoá không?'),
                             okText: t('Xác nhận'),
                             cancelText: t('Huỷ'),
-                            onOk: async () => {},
+                            onOk: async () => {
+                              setLoading(true);
+                              await deleteQuestion.mutateAsync(+record.id);
+                            },
                           });
                         },
                       },

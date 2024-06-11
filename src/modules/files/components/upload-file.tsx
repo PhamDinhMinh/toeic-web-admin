@@ -9,6 +9,7 @@ const UploadFile = ({ value, onChange, accept }: any) => {
       return false;
     },
   };
+  console.log(value, '');
 
   return (
     <>
@@ -18,7 +19,6 @@ const UploadFile = ({ value, onChange, accept }: any) => {
         beforeUpload={(file) => {
           const reader = new FileReader();
           reader.readAsText(file);
-
           // Prevent upload
           return false;
         }}

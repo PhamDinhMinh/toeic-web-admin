@@ -60,6 +60,24 @@ class QuestionToeicService {
     });
   }
 
+  updateQuestionGroup(params: any) {
+    return httpService.request<void>({
+      url: this.endpoint + '/UpdateQuestionGroup',
+      method: 'PUT',
+      data: params,
+    });
+  }
+
+  deleteQuestionGroup(id: number) {
+    return httpService.request<void>({
+      url: this.endpoint + '/DeleteQuestionGroup',
+      method: 'DELETE',
+      params: {
+        id: id,
+      },
+    });
+  }
+
   public async importExcel(
     file: File,
     data: {
