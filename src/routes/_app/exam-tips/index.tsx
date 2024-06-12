@@ -178,9 +178,9 @@ function ExamTipsListPage() {
             },
             {
               title: t('Nội dung'),
-              dataIndex: 'content',
-              key: 'content',
-              render: (content) => (
+              dataIndex: 'description',
+              key: 'description',
+              render: (description) => (
                 <div>
                   <div
                     style={{
@@ -188,12 +188,12 @@ function ExamTipsListPage() {
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                     }}
-                    dangerouslySetInnerHTML={{ __html: content }}
+                    dangerouslySetInnerHTML={{ __html: description }}
                   />
                   <Popover
                     content={
                       <div
-                        dangerouslySetInnerHTML={{ __html: content }}
+                        dangerouslySetInnerHTML={{ __html: description }}
                         style={{
                           maxHeight: '300px',
                           overflow: 'auto',
