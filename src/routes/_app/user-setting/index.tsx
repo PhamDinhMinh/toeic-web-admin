@@ -31,7 +31,7 @@ import userService from '@/modules/users/services/user.service';
 import TitleHeading from '@/shared/components/title-heading';
 
 export const Route = createFileRoute('/_app/user-setting/')({
-  component: QuestionListPage,
+  component: UserSettingPage,
 });
 
 type TTableParams = {
@@ -40,7 +40,7 @@ type TTableParams = {
   filters?: Record<string, any>;
 };
 
-function QuestionListPage() {
+function UserSettingPage() {
   const { antdApp, token } = useApp();
 
   const { t } = useTranslation();
@@ -270,4 +270,4 @@ function QuestionListPage() {
   );
 }
 
-export default QuestionListPage;
+export default UserSettingPage;
